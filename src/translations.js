@@ -64,7 +64,10 @@ export function getCachedWordBank() {
 export function addWordsToCachedWorkBank(words) {
   let cachedWordBank = JSON.parse(localStorage.getItem("word_bank")) || [];
 
-  cachedWordBank = cachedWordBank.concat(words);
+  cachedWordBank = cachedWordBank.concat(words).filter(Boolean);
 
-  localStorage.setItem("word_bank", JSON.stringify(cachedWordBank));
+  localStorage.setItem(
+    "word_bank",
+    JSON.stringify([...new Set(cachedWordBank)])
+  );
 }

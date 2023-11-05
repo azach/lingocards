@@ -10,7 +10,7 @@ body {
 }
 
 .App-header {
-  padding: 20px 40px 0 40px;
+  padding: 20px 40px;
 }
 
 .App-body {
@@ -72,6 +72,13 @@ body {
   }
 }
 
+.Button-row {
+  display: grid;
+  gap: 15px;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+}
+
 button {
   background-color: #73849d;
   border: none;
@@ -106,4 +113,26 @@ a {
   color: #b4b9c3;
   font-size: calc(18px);
   text-decoration: none;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.File-upload {
+  background-color: #73849d;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.928);
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+
+  &.small {
+    padding: 11px 24px;
+    font-size: 14px;
+  }
 }

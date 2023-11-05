@@ -127,13 +127,13 @@ function App() {
         <Header />
       </header>
       <main className="App-body">
-        {cardIndex === -1 && (
+        {(cardIndex === -1 || !card) && (
           <Card
             original={"Start your session"}
             translation={"Start your session"}
           />
         )}
-        {cardIndex > -1 && card && (
+        {card && (
           <Card
             original={swapCardOrder ? card.translation : card.original}
             translation={swapCardOrder ? card.original : card.translation}
@@ -147,10 +147,10 @@ function App() {
             id="swapCardOrder"
             onChange={(e) => setSwapCardOrder(e.target.checked)}
           ></input>
-          <label for="swapCardOrder">Show translation first</label>
+          <label htmlFor="swapCardOrder">Show translation first</label>
         </div>
 
-        <div style={{ marginTop: "40px" }}>
+        <div className="Button-row" style={{ marginTop: "40px" }}>
           <button
             className="failure"
             onClick={() => {
@@ -160,9 +160,9 @@ function App() {
           >
             Wrong
           </button>
-          <span style={{ marginRight: "14px" }} />
+
           <button onClick={nextWord}>Next word</button>
-          <span style={{ marginRight: "14px" }} />
+
           <button
             className="success"
             onClick={() => {
@@ -176,16 +176,17 @@ function App() {
       </main>
 
       <footer className="App-footer">
-        <button
-          className="small"
-          onClick={() => localStorage.removeItem("translations")}
-        >
-          Reset translations cache
-        </button>
-        <span style={{ marginRight: "14px" }} />
-        <button className="small" onClick={() => localStorage.clear()}>
-          Reset cache
-        </button>
+        <div className="Button-row">
+          <button
+            className="small"
+            onClick={() => localStorage.removeItem("translations")}
+          >
+            Reset translations cache
+          </button>
+          <button className="small" onClick={() => localStorage.clear()}>
+            Reset cache
+          </button>
+        </div>
       </footer>
     </div>
   );
