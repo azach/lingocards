@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 
 import "./App.css";
 import Card from "./Card";
+import {
+  fetchTranslation,
+  getCachedTranslation,
+  setCachedTranslation,
+} from "./translations";
 import { useEventListener } from "./useEventListener";
+import { shuffle } from "./utilities";
 
 function App() {
   const [wordBank, setWordBank] = useState([]);
@@ -75,46 +81,19 @@ function App() {
       return;
     }
 
-    const cachedTranslations =
-      JSON.parse(localStorage.getItem("translations")) || {};
-    const cachedTranslation = cachedTranslations[word];
+    const cachedTranslation = getCachedTranslation(word);
 
     if (cachedTranslation === undefined) {
-      const url = `https://www.wordreference.com/gren/${word}`;
-      fetch(url)
-        .then((response) => response.text())
-        .then(async (text) => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(
-            text,
-            "text/html"
-          ).documentElement;
+      fetchTranslation(word).then(({ translation, gender }) => {
+        const storedTranslation = translation + (gender ? ` (${gender})` : "");
 
-          let translations = htmlDoc.querySelectorAll(
-            '[data-dict="gren"] tr[id] td.ToWrd'
-          );
+        setCachedTranslation(word, storedTranslation);
 
-          if (translations.length === 0) {
-            translations = htmlDoc.querySelectorAll(
-              '[data-dict="engr"] tr[id] td.FrWrd'
-            );
-          }
-
-          const translation = Array.from(translations)
-            .map((el) => el.innerText.trim())
-            .join(", ");
-
-          cachedTranslations[word] = translation;
-          localStorage.setItem(
-            "translations",
-            JSON.stringify(cachedTranslations)
-          );
-
-          setCard({
-            original: word,
-            translation,
-          });
+        setCard({
+          original: word,
+          translation: storedTranslation,
         });
+      });
     } else {
       setCard({
         original: word,
@@ -177,23 +156,6 @@ function App() {
       </footer>
     </div>
   );
-}
-
-function shuffle(array) {
-  let currentIndex = array.length,
-    randomIndex;
-
-  while (currentIndex > 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-
-  return array;
 }
 
 export default App;
