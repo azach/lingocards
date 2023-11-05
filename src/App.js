@@ -162,12 +162,13 @@ function App() {
 
         {!cardResult && (
           <>
-            {(cardIndex === -1 ||
-              (cardIndex !== sessionWords.length && !card)) && (
-              <TitleCard text={"Start your session"} />
-            )}
+            {cardIndex === -1 && <TitleCard text={"Start your session"} />}
 
             {cardIndex === sessionWords.length && <CompleteTitleCard />}
+
+            {cardIndex >= 0 && cardIndex < sessionWords.length && !card && (
+              <TitleCard text="" />
+            )}
 
             {cardIndex >= 0 && cardIndex < sessionWords.length && card && (
               <Card
