@@ -98,22 +98,7 @@ function App() {
 
   // Load words from dictionary
   useEffect(() => {
-    const cachedWordBank = getCachedWordBank();
-
-    fetch("words.txt")
-      .then((res) => res.text())
-      .then((text) =>
-        setWordBank(
-          shuffle(
-            text
-              .split("\n")
-              .map((s) => s.trim())
-              .filter(Boolean)
-              .concat(cachedWordBank)
-          )
-        )
-      )
-      .catch((e) => console.error(e));
+    setWordBank(shuffle(getCachedWordBank()));
   }, []);
 
   // Initialize session

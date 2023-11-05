@@ -1,4 +1,7 @@
 import ReactCardFlip from "react-card-flip";
+import star from "./assets/star.png";
+import thumbsUp from "./assets/thumbs-up.png";
+import thumbsDown from "./assets/thumbs-down.png";
 
 function TitleCard({ text }) {
   return (
@@ -32,7 +35,7 @@ export const SuccessTitleCard = () => (
         alt="success"
         height="128"
         width="128"
-        src="thumbs-up.png"
+        src={thumbsUp}
         style={{ opacity: 0.85, marginTop: "13px" }}
       />
     }
@@ -46,7 +49,7 @@ export const MissTitleCard = () => (
         alt="miss"
         height="128"
         width="128"
-        src="thumbs-down.png"
+        src={thumbsDown}
         style={{ opacity: 0.85, marginTop: "13px" }}
       />
     }
@@ -60,7 +63,7 @@ export const CompleteTitleCard = () => (
         alt="Session complete"
         height="128"
         width="128"
-        src="star.png"
+        src={star}
         style={{ opacity: 0.9 }}
       />
     }

@@ -16,6 +16,7 @@ export function setCachedTranslation(word, translation) {
 
 export async function fetchTranslation(word) {
   const response = await fetch(`https://www.wordreference.com/gren/${word}`);
+
   const text = await response.text();
 
   const parser = new DOMParser();
