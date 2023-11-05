@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/lingocards/static/css/main.097bb735.css",
-    "main.js": "/lingocards/static/js/main.c3f02dc1.js",
+    "main.js": "/lingocards/static/js/main.35dd6320.js",
     "static/media/thumbs-up.png": "/lingocards/static/media/thumbs-up.09d9baeffa1bb70aac15.png",
     "static/media/thumbs-down.png": "/lingocards/static/media/thumbs-down.099fe9c7e44e55ef61a4.png",
     "static/media/star.png": "/lingocards/static/media/star.6a69830a603a0db37114.png",
     "index.html": "/lingocards/index.html",
     "main.097bb735.css.map": "/lingocards/static/css/main.097bb735.css.map",
-    "main.c3f02dc1.js.map": "/lingocards/static/js/main.c3f02dc1.js.map"
+    "main.35dd6320.js.map": "/lingocards/static/js/main.35dd6320.js.map"
   },
   "entrypoints": [
     "static/css/main.097bb735.css",
-    "static/js/main.c3f02dc1.js"
+    "static/js/main.35dd6320.js"
   ]
 }
