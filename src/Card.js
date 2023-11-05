@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import { useEventListener } from "./useEventListener";
 
+const SPACEBAR = " ";
+
 function Card({ original, translation, cardIndex }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -11,7 +13,7 @@ function Card({ original, translation, cardIndex }) {
   }, [original]);
 
   useEventListener("keydown", ({ key }) => {
-    if (key === " ") {
+    if (key === SPACEBAR) {
       setIsFlipped(!isFlipped);
     }
   });

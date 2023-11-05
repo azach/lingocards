@@ -4,6 +4,7 @@ import "./App.css";
 import Card from "./Card";
 import Header from "./Header";
 import { getBucket, getNextWord, markCorrect, markIncorrect } from "./scores";
+import TitleCard from "./TitleCard";
 import {
   fetchTranslation,
   getCachedTranslation,
@@ -22,11 +23,7 @@ function App() {
   const [sessionWords, setSessionWords] = useState([]);
   const [sessionBuckets, setSessionBuckets] = useState(null);
 
-  const previousWord = () =>
-    setCardIndex(
-      ((cardIndex === 0 ? sessionWords.length : cardIndex) - 1) %
-        sessionWords.length
-    );
+  const previousWord = () => setCardIndex(cardIndex === 0 ? 0 : cardIndex - 1);
 
   const nextWord = () => {
     if (cardIndex < sessionWords.length - 1) {
@@ -34,12 +31,12 @@ function App() {
     } else {
       const nextWord = getNextWord({ sessionBuckets, setSessionBuckets });
 
-      if (!nextWord && sessionWords.length) {
-        // Loop through session
-        setCardIndex(0);
-      } else {
+      if (nextWord) {
         setSessionWords([...sessionWords, nextWord]);
         setCardIndex(cardIndex + 1);
+      } else {
+        // End of session
+        setCardIndex(sessionWords.length);
       }
     }
   };
@@ -128,12 +125,14 @@ function App() {
       </header>
       <main className="App-body">
         {(cardIndex === -1 || !card) && (
-          <Card
-            original={"Start your session"}
-            translation={"Start your session"}
-          />
+          <TitleCard text={"Start your session"} />
         )}
-        {card && (
+
+        {cardIndex === sessionWords.length && (
+          <TitleCard text={"Session complete"} />
+        )}
+
+        {cardIndex >= 0 && cardIndex < sessionWords.length && card && (
           <Card
             original={swapCardOrder ? card.translation : card.original}
             translation={swapCardOrder ? card.original : card.translation}
@@ -158,7 +157,7 @@ function App() {
               nextWord();
             }}
           >
-            Wrong
+            Miss
           </button>
 
           <button onClick={nextWord}>Next word</button>
@@ -175,19 +174,7 @@ function App() {
         </div>
       </main>
 
-      <footer className="App-footer">
-        <div className="Button-row">
-          <button
-            className="small"
-            onClick={() => localStorage.removeItem("translations")}
-          >
-            Reset translations cache
-          </button>
-          <button className="small" onClick={() => localStorage.clear()}>
-            Reset cache
-          </button>
-        </div>
-      </footer>
+      <footer className="App-footer"></footer>
     </div>
   );
 }
