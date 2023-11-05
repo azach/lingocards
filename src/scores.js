@@ -21,7 +21,7 @@ export const markIncorrect = (word) => {
   const scores = JSON.parse(localStorage.getItem("scores")) || {};
   const cachedWord = scores[word] || {};
   cachedWord["incorrect"] = (cachedWord["incorrect"] || 0) + 1;
-  cachedWord["bucket"] = Math.min((cachedWord["bucket"] || 0) - 1, 0);
+  cachedWord["bucket"] = Math.max((cachedWord["bucket"] || 0) - 1, 0);
 
   scores[word] = cachedWord;
 
