@@ -4,7 +4,11 @@ import "./App.css";
 import Card from "./Card";
 import Header from "./Header";
 import { getBucket, getNextWord, markCorrect, markIncorrect } from "./scores";
-import TitleCard from "./TitleCard";
+import TitleCard, {
+  CompleteTitleCard,
+  MissTitleCard,
+  SuccessTitleCard,
+} from "./TitleCard";
 import {
   fetchTranslation,
   getCachedTranslation,
@@ -14,6 +18,10 @@ import {
 import { useEventListener } from "./useEventListener";
 import { shuffle } from "./utilities";
 
+const STATUS_TIMEOUT_MS = 250;
+const RESULT_SUCCESS = "success";
+const RESULT_MISS = "miss";
+
 function App() {
   const [wordBank, setWordBank] = useState([]);
   const [cardIndex, setCardIndex] = useState(-1);
@@ -22,6 +30,7 @@ function App() {
 
   const [sessionWords, setSessionWords] = useState([]);
   const [sessionBuckets, setSessionBuckets] = useState(null);
+  const [cardResult, setCardResult] = useState(null);
 
   const previousWord = () => setCardIndex(cardIndex === 0 ? 0 : cardIndex - 1);
 
@@ -37,15 +46,53 @@ function App() {
       } else {
         // End of session
         setCardIndex(sessionWords.length);
+        setCard(null);
       }
     }
   };
 
-  useEventListener("keydown", ({ key }) => {
-    if (key === "ArrowLeft") {
-      previousWord();
-    } else if (key === "ArrowRight") {
+  const gotWord = () => {
+    if (card) {
+      markCorrect(card.original);
+      setCardResult(RESULT_SUCCESS);
+      setTimeout(() => {
+        setCardResult(null);
+        nextWord();
+      }, STATUS_TIMEOUT_MS);
+    } else {
       nextWord();
+    }
+  };
+
+  const missedWord = () => {
+    if (card) {
+      markIncorrect(card.original);
+      setCardResult(RESULT_MISS);
+      setTimeout(() => {
+        setCardResult(null);
+        nextWord();
+      }, STATUS_TIMEOUT_MS);
+    } else {
+      nextWord();
+    }
+  };
+
+  useEventListener("keydown", ({ key }) => {
+    switch (key) {
+      case "ArrowLeft":
+        previousWord();
+        break;
+      case "ArrowRight":
+        nextWord();
+        break;
+      case "d":
+        gotWord();
+        break;
+      case "a":
+        missedWord();
+        break;
+
+      default:
     }
   });
 
@@ -124,20 +171,27 @@ function App() {
         <Header />
       </header>
       <main className="App-body">
-        {(cardIndex === -1 || !card) && (
-          <TitleCard text={"Start your session"} />
-        )}
+        {cardResult === RESULT_SUCCESS && <SuccessTitleCard />}
 
-        {cardIndex === sessionWords.length && (
-          <TitleCard text={"Session complete"} />
-        )}
+        {cardResult === RESULT_MISS && <MissTitleCard />}
 
-        {cardIndex >= 0 && cardIndex < sessionWords.length && card && (
-          <Card
-            original={swapCardOrder ? card.translation : card.original}
-            translation={swapCardOrder ? card.original : card.translation}
-            cardIndex={cardIndex}
-          />
+        {!cardResult && (
+          <>
+            {(cardIndex === -1 ||
+              (cardIndex !== sessionWords.length && !card)) && (
+              <TitleCard text={"Start your session"} />
+            )}
+
+            {cardIndex === sessionWords.length && <CompleteTitleCard />}
+
+            {cardIndex >= 0 && cardIndex < sessionWords.length && card && (
+              <Card
+                original={swapCardOrder ? card.translation : card.original}
+                translation={swapCardOrder ? card.original : card.translation}
+                cardIndex={cardIndex}
+              />
+            )}
+          </>
         )}
 
         <div style={{ marginTop: "20px" }}>
@@ -150,25 +204,13 @@ function App() {
         </div>
 
         <div className="Button-row" style={{ marginTop: "40px" }}>
-          <button
-            className="failure"
-            onClick={() => {
-              markIncorrect(card.original);
-              nextWord();
-            }}
-          >
+          <button className="failure" onClick={missedWord}>
             Miss
           </button>
 
           <button onClick={nextWord}>Next word</button>
 
-          <button
-            className="success"
-            onClick={() => {
-              markCorrect(card.original);
-              nextWord();
-            }}
-          >
+          <button className="success" onClick={gotWord}>
             Correct
           </button>
         </div>

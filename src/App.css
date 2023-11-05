@@ -79,7 +79,7 @@ body {
   grid-auto-columns: max-content;
 }
 
-button {
+button, .File-upload {
   background-color: #73849d;
   border: none;
   border-radius: 5px;
@@ -90,6 +90,13 @@ button {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+  box-shadow: 0 2px 4px 0 rgba(115, 132, 157, 0.1);
+
+  &:active {
+    transform: translate3d(1px, 2px, 0px);
+    box-shadow: 0 0 0;
+    outline: 0;
+  }
 
   &.primary {
     background-color: #ff5722;
@@ -117,22 +124,4 @@ a {
 
 input[type="file"] {
   display: none;
-}
-
-.File-upload {
-  background-color: #73849d;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.928);
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-
-  &.small {
-    padding: 11px 24px;
-    font-size: 14px;
-  }
 }

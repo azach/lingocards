@@ -12,8 +12,8 @@ function Card({ original, translation, cardIndex }) {
     setIsFlipped(false);
   }, [original]);
 
-  useEventListener("keydown", ({ key }) => {
-    if (key === SPACEBAR) {
+  useEventListener("keydown", (e) => {
+    if (e.key === SPACEBAR) {
       setIsFlipped(!isFlipped);
     }
   });
