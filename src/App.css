@@ -28,6 +28,11 @@ body {
 .Card-wrapper {
   position: relative;
   background-color: #505765;
+  cursor: pointer;
+
+  &.title {
+    cursor: default;
+  }
 
   &.back {
     background-color: #636c7f;
@@ -42,7 +47,6 @@ body {
 }
 
 .Card-body:hover {
-  cursor: pointer;
   box-shadow: 0 16px 32px 0 rgba(0, 0, 0, 0.2);
 }
 

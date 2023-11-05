@@ -5,7 +5,7 @@ import thumbsDown from "./assets/thumbs-down.png";
 
 function TitleCard({ text }) {
   return (
-    <div className="Card-wrapper front">
+    <div className="Card-wrapper title">
       <ReactCardFlip
         containerClassName="Card-body"
         cardStyles={{
