@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/lingocards/static/css/main.549b56e2.css",
-    "main.js": "/lingocards/static/js/main.3f18d9b7.js",
+    "main.js": "/lingocards/static/js/main.2874108a.js",
     "index.html": "/lingocards/index.html",
     "main.549b56e2.css.map": "/lingocards/static/css/main.549b56e2.css.map",
-    "main.3f18d9b7.js.map": "/lingocards/static/js/main.3f18d9b7.js.map"
+    "main.2874108a.js.map": "/lingocards/static/js/main.2874108a.js.map"
   },
   "entrypoints": [
     "static/css/main.549b56e2.css",
-    "static/js/main.3f18d9b7.js"
+    "static/js/main.2874108a.js"
   ]
 }
