@@ -35,7 +35,7 @@ export async function fetchTranslation(word) {
     .map((el) => el.innerText.trim())
     .join(", ");
 
-  let gender = "";
+  let gender = [];
   const fromTranslationToTargetPrincipalTranslation = Array.from(
     htmlDoc.querySelectorAll('[data-dict="engr"] tr.langHeader ~ tr .ToWrd')
   )
@@ -44,15 +44,15 @@ export async function fetchTranslation(word) {
 
   if (fromTranslationToTargetPrincipalTranslation) {
     if (fromTranslationToTargetPrincipalTranslation.includes("ουδ")) {
-      gender += "n";
+      gender.push("n");
     }
     if (fromTranslationToTargetPrincipalTranslation.includes("θηλ")) {
-      gender += "f";
+      gender.push("f");
     }
     if (fromTranslationToTargetPrincipalTranslation.includes("αρ")) {
-      gender += "m";
+      gender.push("m");
     }
   }
 
-  return { translation, gender };
+  return { translation, gender: gender.join("/") };
 }
