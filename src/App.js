@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 
 import "./App.css";
 import Card from "./Card";
+import Header from "./Header";
 import { getBucket, getNextWord, markCorrect, markIncorrect } from "./scores";
 import {
   fetchTranslation,
   getCachedTranslation,
+  getCachedWordBank,
   setCachedTranslation,
 } from "./translations";
 import { useEventListener } from "./useEventListener";
@@ -18,18 +20,7 @@ function App() {
   const [swapCardOrder, setSwapCardOrder] = useState(false);
 
   const [sessionWords, setSessionWords] = useState([]);
-  const [sessionBuckets, setSessionBuckets] = useState({});
-
-  const initializeSession = () => {
-    wordBank.forEach((word) => {
-      const wordBucket = getBucket(word);
-      sessionBuckets[wordBucket] ||= new Set();
-      sessionBuckets[wordBucket].add(word);
-    });
-
-    setSessionBuckets({ ...sessionBuckets });
-    setSessionWords([]);
-  };
+  const [sessionBuckets, setSessionBuckets] = useState(null);
 
   const previousWord = () =>
     setCardIndex(
@@ -63,6 +54,8 @@ function App() {
 
   // Load words from dictionary
   useEffect(() => {
+    const cachedWordBank = getCachedWordBank();
+
     fetch("words.txt")
       .then((res) => res.text())
       .then((text) =>
@@ -72,6 +65,7 @@ function App() {
               .split("\n")
               .map((s) => s.trim())
               .filter(Boolean)
+              .concat(cachedWordBank)
           )
         )
       )
@@ -80,8 +74,19 @@ function App() {
 
   // Initialize session
   useEffect(() => {
-    initializeSession();
-  }, [wordBank]);
+    if (!sessionBuckets && wordBank.length > 0) {
+      const newSessionBuckets = {};
+
+      wordBank.forEach((word) => {
+        const wordBucket = getBucket(word);
+        newSessionBuckets[wordBucket] ||= new Set();
+        newSessionBuckets[wordBucket].add(word);
+      });
+
+      setSessionBuckets(newSessionBuckets);
+      setSessionWords([]);
+    }
+  }, [wordBank, sessionBuckets]);
 
   // Load next word
   useEffect(() => {
@@ -90,6 +95,10 @@ function App() {
     }
 
     const word = sessionWords[cardIndex];
+
+    if (!word) {
+      return;
+    }
 
     const cachedTranslation = getCachedTranslation(word);
 
@@ -114,9 +123,11 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header"></header>
+      <header className="App-header">
+        <Header />
+      </header>
       <main className="App-body">
-        {cardIndex == -1 && (
+        {cardIndex === -1 && (
           <Card
             original={"Start your session"}
             translation={"Start your session"}
@@ -165,11 +176,16 @@ function App() {
       </main>
 
       <footer className="App-footer">
-        <button onClick={() => localStorage.removeItem("translations")}>
+        <button
+          className="small"
+          onClick={() => localStorage.removeItem("translations")}
+        >
           Reset translations cache
         </button>
         <span style={{ marginRight: "14px" }} />
-        <button onClick={() => localStorage.clear()}>Reset cache</button>
+        <button className="small" onClick={() => localStorage.clear()}>
+          Reset cache
+        </button>
       </footer>
     </div>
   );

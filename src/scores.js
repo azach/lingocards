@@ -3,18 +3,14 @@ import { shuffle } from "./utilities";
 export const getBucket = (word) => {
   const scores = JSON.parse(localStorage.getItem("scores")) || {};
   const cachedWord = scores[word] || {};
-  return cachedWord["bucket"] || 0;
+  return Math.max(cachedWord["bucket"] || 0, 0);
 };
 
 export const markCorrect = (word) => {
   const scores = JSON.parse(localStorage.getItem("scores")) || {};
   const cachedWord = scores[word] || {};
   cachedWord["correct"] = (cachedWord["correct"] || 0) + 1;
-  cachedWord["bucket"] = (cachedWord["bucket"] || 0) + 1;
-
-  if (!scores["maxBucket"] || cachedWord["bucket"] > scores["maxBucket"]) {
-    scores["maxBucket"] = cachedWord["bucket"];
-  }
+  cachedWord["bucket"] = Math.max(cachedWord["bucket"] || 0, 0) + 1;
 
   scores[word] = cachedWord;
 

@@ -56,3 +56,15 @@ export async function fetchTranslation(word) {
 
   return { translation, gender: gender.join("/") };
 }
+
+export function getCachedWordBank() {
+  return JSON.parse(localStorage.getItem("word_bank")) || [];
+}
+
+export function addWordsToCachedWorkBank(words) {
+  let cachedWordBank = JSON.parse(localStorage.getItem("word_bank")) || [];
+
+  cachedWordBank = cachedWordBank.concat(words);
+
+  localStorage.setItem("word_bank", JSON.stringify(cachedWordBank));
+}
