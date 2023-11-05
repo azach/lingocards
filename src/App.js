@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import "./App.css";
 import Card from "./Card";
+import { getBucket, getNextWord, markCorrect, markIncorrect } from "./scores";
 import {
   fetchTranslation,
   getCachedTranslation,
@@ -12,41 +13,45 @@ import { shuffle } from "./utilities";
 
 function App() {
   const [wordBank, setWordBank] = useState([]);
-  const [cardIndex, setCardIndex] = useState(0);
+  const [cardIndex, setCardIndex] = useState(-1);
   const [card, setCard] = useState(null);
   const [swapCardOrder, setSwapCardOrder] = useState(false);
 
-  const markCorrect = (word) => {
-    const scores = JSON.parse(localStorage.getItem("scores")) || {};
-    const cachedWord = scores[word] || {};
-    cachedWord["correct"] = (cachedWord["correct"] || 0) + 1;
-    cachedWord["bucket"] = (cachedWord["bucket"] || 0) + 1;
+  const [sessionWords, setSessionWords] = useState([]);
+  const [sessionBuckets, setSessionBuckets] = useState({});
 
-    if (!scores["maxBucket"] || cachedWord["bucket"] > scores["maxBucket"]) {
-      scores["maxBucket"] = cachedWord["bucket"];
-    }
+  const initializeSession = () => {
+    wordBank.forEach((word) => {
+      const wordBucket = getBucket(word);
+      sessionBuckets[wordBucket] ||= new Set();
+      sessionBuckets[wordBucket].add(word);
+    });
 
-    scores[word] = cachedWord;
-
-    localStorage.setItem("scores", JSON.stringify(scores));
-  };
-
-  const markIncorrect = (word) => {
-    const scores = JSON.parse(localStorage.getItem("scores")) || {};
-    const cachedWord = scores[word] || {};
-    cachedWord["incorrect"] = (cachedWord["incorrect"] || 0) + 1;
-    cachedWord["bucket"] = Math.min((cachedWord["bucket"] || 0) - 1, 0);
-
-    scores[word] = cachedWord;
-
-    localStorage.setItem("scores", JSON.stringify(scores));
+    setSessionBuckets({ ...sessionBuckets });
+    setSessionWords([]);
   };
 
   const previousWord = () =>
     setCardIndex(
-      ((cardIndex === 0 ? wordBank.length : cardIndex) - 1) % wordBank.length
+      ((cardIndex === 0 ? sessionWords.length : cardIndex) - 1) %
+        sessionWords.length
     );
-  const nextWord = () => setCardIndex((cardIndex + 1) % wordBank.length);
+
+  const nextWord = () => {
+    if (cardIndex < sessionWords.length - 1) {
+      setCardIndex(cardIndex + 1);
+    } else {
+      const nextWord = getNextWord({ sessionBuckets, setSessionBuckets });
+
+      if (!nextWord && sessionWords.length) {
+        // Loop through session
+        setCardIndex(0);
+      } else {
+        setSessionWords([...sessionWords, nextWord]);
+        setCardIndex(cardIndex + 1);
+      }
+    }
+  };
 
   useEventListener("keydown", ({ key }) => {
     if (key === "ArrowLeft") {
@@ -73,13 +78,18 @@ function App() {
       .catch((e) => console.error(e));
   }, []);
 
+  // Initialize session
+  useEffect(() => {
+    initializeSession();
+  }, [wordBank]);
+
   // Load next word
   useEffect(() => {
-    const word = wordBank[cardIndex];
-
-    if (!word) {
+    if (cardIndex < 0 && cardIndex >= sessionWords.length) {
       return;
     }
+
+    const word = sessionWords[cardIndex];
 
     const cachedTranslation = getCachedTranslation(word);
 
@@ -100,16 +110,23 @@ function App() {
         translation: cachedTranslation,
       });
     }
-  }, [cardIndex, wordBank]);
+  }, [cardIndex, sessionWords]);
 
   return (
     <div className="App">
       <header className="App-header"></header>
       <main className="App-body">
-        {card && (
+        {cardIndex == -1 && (
+          <Card
+            original={"Start your session"}
+            translation={"Start your session"}
+          />
+        )}
+        {cardIndex >= 0 && (
           <Card
             original={swapCardOrder ? card.translation : card.original}
             translation={swapCardOrder ? card.original : card.translation}
+            cardIndex={cardIndex}
           />
         )}
 

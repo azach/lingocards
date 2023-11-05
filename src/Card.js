@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import { useEventListener } from "./useEventListener";
 
-function Card({ original, translation }) {
+function Card({ original, translation, cardIndex }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
@@ -62,6 +62,8 @@ function Card({ original, translation }) {
           Dictionary &#8599;
         </a>
       </div>
+
+      <div className="Card-footer">{cardIndex}</div>
     </div>
   );
 }
