@@ -133,7 +133,7 @@ function App() {
             translation={"Start your session"}
           />
         )}
-        {cardIndex >= 0 && (
+        {cardIndex > -1 && card && (
           <Card
             original={swapCardOrder ? card.translation : card.original}
             translation={swapCardOrder ? card.original : card.translation}
