@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { addWordsToCachedWorkBank } from "./translations";
 
 function Header() {
+  const [showActions, setShowActions] = useState(false);
+
   const importFile = (e) => {
     const file = e.target.files[0];
 
@@ -19,27 +22,37 @@ function Header() {
   };
 
   return (
-    <>
-      <div className="Button-row">
-        <button
-          className="small"
-          onClick={() => {
-            const response = window.prompt("Enter word to add");
+    <div className="Button-row">
+      <button
+        className="small"
+        onClick={() => setShowActions(!showActions)}
+        style={{ padding: "11px 14px" }}
+      >
+        {showActions ? "←" : "→"}
+      </button>
 
-            if (response) {
-              addWordsToCachedWorkBank([response.trim()]);
-            }
-          }}
-        >
-          Add new word
-        </button>
+      {showActions && (
+        <>
+          <button
+            className="small"
+            onClick={() => {
+              const response = window.prompt("Enter word to add");
 
-        <label htmlFor="file-upload" className="File-upload small">
-          Import words
-        </label>
-        <input id="file-upload" type="file" onChange={importFile} />
-      </div>
-    </>
+              if (response) {
+                addWordsToCachedWorkBank([response.trim()]);
+              }
+            }}
+          >
+            Add new word
+          </button>
+
+          <label htmlFor="file-upload" className="File-upload small">
+            Import words
+          </label>
+          <input id="file-upload" type="file" onChange={importFile} />
+        </>
+      )}
+    </div>
   );
 }
 
