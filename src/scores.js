@@ -35,7 +35,7 @@ export const getNextWord = ({ sessionBuckets, setSessionBuckets }) => {
     return;
   }
 
-  const weights = buckets.map((_, i) => 100 / Math.pow(2, i));
+  const weights = buckets.map((val) => 100 / Math.pow(2, Number(val)));
   const totalWeight = weights.reduce((acc, curr) => acc + curr, 0);
   const randomWeight = Math.random() * totalWeight;
 
