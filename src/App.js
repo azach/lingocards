@@ -152,7 +152,7 @@ function App() {
 
     const cachedTranslation = getCachedTranslation(word);
 
-    if (cachedTranslation === undefined) {
+    if (cachedTranslation === undefined || cachedTranslation === null) {
       fetchTranslation(word).then(({ translation, gender }) => {
         const storedTranslation = translation + (gender ? ` (${gender})` : "");
 

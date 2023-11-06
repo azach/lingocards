@@ -14,6 +14,24 @@ export function setCachedTranslation(word, translation) {
   localStorage.setItem("translations", JSON.stringify(cachedTranslations));
 }
 
+export function addWordsToCachedWorkBank(words) {
+  const cachedTranslations =
+    JSON.parse(localStorage.getItem("translations")) || {};
+
+  words.forEach((word) => (cachedTranslations[word] = null));
+
+  localStorage.setItem("translations", JSON.stringify(cachedTranslations));
+}
+
+export function deleteCachedTranslation(word) {
+  const cachedTranslations =
+    JSON.parse(localStorage.getItem("translations")) || {};
+
+  delete cachedTranslations[word];
+
+  localStorage.setItem("translations", JSON.stringify(cachedTranslations));
+}
+
 export async function fetchTranslation(word) {
   const response = await fetch(`https://www.wordreference.com/gren/${word}`);
 
@@ -59,27 +77,8 @@ export async function fetchTranslation(word) {
 }
 
 export function getCachedWordBank() {
-  return JSON.parse(localStorage.getItem("word_bank")) || [];
-}
+  const cachedTranslations =
+    JSON.parse(localStorage.getItem("translations")) || {};
 
-export function addWordsToCachedWorkBank(words) {
-  let cachedWordBank = JSON.parse(localStorage.getItem("word_bank")) || [];
-
-  cachedWordBank = cachedWordBank.concat(words).filter(Boolean);
-
-  localStorage.setItem(
-    "word_bank",
-    JSON.stringify([...new Set(cachedWordBank)])
-  );
-}
-
-export function removeWordFromCachedWorkBank(word) {
-  let cachedWordBank = JSON.parse(localStorage.getItem("word_bank")) || [];
-
-  cachedWordBank = cachedWordBank.filter((w) => w !== word).filter(Boolean);
-
-  localStorage.setItem(
-    "word_bank",
-    JSON.stringify([...new Set(cachedWordBank)])
-  );
+  return Object.keys(cachedTranslations);
 }

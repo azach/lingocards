@@ -3,7 +3,7 @@ import "./Card.css";
 import { useEffect, useState } from "react";
 
 import ReactCardFlip from "react-card-flip";
-import { removeWordFromCachedWorkBank } from "./translations";
+import { deleteCachedTranslation } from "./translations";
 import { useEventListener } from "./useEventListener";
 
 const SPACEBAR = " ";
@@ -75,9 +75,7 @@ function Card({ original, translation, cardIndex, nextWord }) {
               className="card-remove-word"
               onClick={(e) => {
                 e.stopPropagation();
-                removeWordFromCachedWorkBank(
-                  isFlipped ? translation : original
-                );
+                deleteCachedTranslation(isFlipped ? translation : original);
                 nextWord();
               }}
             >
