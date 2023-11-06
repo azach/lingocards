@@ -23,7 +23,6 @@ const RESULT_SUCCESS = "success";
 const RESULT_MISS = "miss";
 
 function App() {
-  const [wordBank, setWordBank] = useState([]);
   const [cardIndex, setCardIndex] = useState(-1);
   const [card, setCard] = useState(null);
   const [swapCardOrder, setSwapCardOrder] = useState(false);
@@ -31,6 +30,23 @@ function App() {
   const [sessionWords, setSessionWords] = useState([]);
   const [sessionBuckets, setSessionBuckets] = useState(null);
   const [cardResult, setCardResult] = useState(null);
+
+  const initializeSession = () => {
+    const sessionWordBank = shuffle(getCachedWordBank());
+
+    const newSessionBuckets = {};
+
+    sessionWordBank.forEach((word) => {
+      const wordBucket = getBucket(word);
+      newSessionBuckets[wordBucket] ||= new Set();
+      newSessionBuckets[wordBucket].add(word);
+    });
+
+    setSessionBuckets(newSessionBuckets);
+    setSessionWords([]);
+    setCard(null);
+    setCardIndex(-1);
+  };
 
   const previousWord = () => setCardIndex(cardIndex === 0 ? 0 : cardIndex - 1);
 
@@ -97,25 +113,7 @@ function App() {
   });
 
   // Load words from dictionary
-  useEffect(() => {
-    setWordBank(shuffle(getCachedWordBank()));
-  }, []);
-
-  // Initialize session
-  useEffect(() => {
-    if (!sessionBuckets && wordBank.length > 0) {
-      const newSessionBuckets = {};
-
-      wordBank.forEach((word) => {
-        const wordBucket = getBucket(word);
-        newSessionBuckets[wordBucket] ||= new Set();
-        newSessionBuckets[wordBucket].add(word);
-      });
-
-      setSessionBuckets(newSessionBuckets);
-      setSessionWords([]);
-    }
-  }, [wordBank, sessionBuckets]);
+  useEffect(() => initializeSession(), []);
 
   // Load next word
   useEffect(() => {
@@ -191,15 +189,25 @@ function App() {
         </div>
 
         <div className="Button-row" style={{ marginTop: "40px" }}>
-          <button className="failure" onClick={missedWord}>
-            Miss
-          </button>
+          {cardIndex === sessionWords.length && (
+            <button className="failure" onClick={initializeSession}>
+              New session
+            </button>
+          )}
 
-          <button onClick={nextWord}>Next word</button>
+          {cardIndex < sessionWords.length && (
+            <>
+              <button className="failure" onClick={missedWord}>
+                Miss
+              </button>
 
-          <button className="success" onClick={gotWord}>
-            Correct
-          </button>
+              <button onClick={nextWord}>Next word</button>
+
+              <button className="success" onClick={gotWord}>
+                Correct
+              </button>
+            </>
+          )}
         </div>
       </main>
 
