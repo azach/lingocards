@@ -97,6 +97,7 @@ button,
   gap: 15px;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
+  align-items: center;
 }
 
 .dropdown {
@@ -114,7 +115,7 @@ button,
 }
 
 .dropdown-content a {
-  color: black;
+  color: #282c34;
   text-decoration: none;
   display: block;
   padding: 14px 18px;
@@ -129,4 +130,9 @@ button,
 
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+.select-dropdown {
+  background-color: rgba(115, 132, 157, 0.8);
+  color: #282c34;
 }

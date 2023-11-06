@@ -1,5 +1,13 @@
 import { shuffle } from "./utilities";
 
+export const DEFAULT_SESSION_LENGTH = 20;
+export const SESSION_LENGTHS = [
+  { value: null, label: "All words" },
+  { value: 50, label: 50 },
+  { value: 20, label: 20 },
+  { value: 5, label: 5 },
+];
+
 export const getBucket = (word) => {
   const scores = JSON.parse(localStorage.getItem("scores")) || {};
   const cachedWord = scores[word] || {};

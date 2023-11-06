@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
+import Select from "react-select";
 
 import "./App.css";
 import Card from "./Card";
 import Header from "./Header";
-import { getBucket, getNextWord, markCorrect, markIncorrect } from "./scores";
+import {
+  DEFAULT_SESSION_LENGTH,
+  getBucket,
+  getNextWord,
+  markCorrect,
+  markIncorrect,
+  SESSION_LENGTHS,
+} from "./scores";
 import TitleCard, {
   CompleteTitleCard,
   MissTitleCard,
@@ -29,6 +37,7 @@ function App() {
 
   const [sessionWords, setSessionWords] = useState([]);
   const [sessionBuckets, setSessionBuckets] = useState(null);
+  const [sessionLength, setSessionLength] = useState(DEFAULT_SESSION_LENGTH);
   const [cardResult, setCardResult] = useState(null);
 
   const initializeSession = () => {
@@ -48,10 +57,24 @@ function App() {
     setCardIndex(-1);
   };
 
-  const previousWord = () => setCardIndex(cardIndex === 0 ? 0 : cardIndex - 1);
+  const previousWord = () => {
+    if (cardIndex === 0) {
+      return;
+    }
+
+    if (sessionLength && cardIndex === null && sessionWords.length) {
+      setCardIndex(sessionLength - 1);
+    } else if (cardIndex > 0) {
+      setCardIndex(cardIndex - 1);
+    }
+  };
 
   const nextWord = () => {
-    if (cardIndex < sessionWords.length - 1) {
+    if (sessionLength && cardIndex >= sessionLength - 1) {
+      // End of session with set session length
+      setCardIndex(sessionWords.length);
+      setCard(null);
+    } else if (cardIndex < sessionWords.length - 1) {
       setCardIndex(cardIndex + 1);
     } else {
       const nextWord = getNextWord({ sessionBuckets, setSessionBuckets });
@@ -60,7 +83,7 @@ function App() {
         setSessionWords([...sessionWords, nextWord]);
         setCardIndex(cardIndex + 1);
       } else {
-        // End of session
+        // End of session without set session length
         setCardIndex(sessionWords.length);
         setCard(null);
       }
@@ -189,6 +212,13 @@ function App() {
               ></input>
               <label htmlFor="swapCardOrder">Show translation first</label>
             </div>
+
+            <Select
+              className="select-dropdown"
+              placeholder="Session length"
+              onChange={(e) => setSessionLength(e.value)}
+              options={SESSION_LENGTHS}
+            ></Select>
           </div>
         </div>
 
