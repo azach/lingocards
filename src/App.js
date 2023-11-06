@@ -70,6 +70,8 @@ function App() {
   };
 
   const nextWord = () => {
+    setCardResult(null);
+
     if (sessionLength && cardIndex >= sessionLength - 1) {
       // End of session with set session length
       setCardIndex(sessionWords.length);
@@ -95,7 +97,6 @@ function App() {
       markCorrect(card.original);
       setCardResult(RESULT_SUCCESS);
       setTimeout(() => {
-        setCardResult(null);
         nextWord();
       }, STATUS_TIMEOUT_MS);
     } else {
@@ -108,7 +109,6 @@ function App() {
       markIncorrect(card.original);
       setCardResult(RESULT_MISS);
       setTimeout(() => {
-        setCardResult(null);
         nextWord();
       }, STATUS_TIMEOUT_MS);
     } else {
