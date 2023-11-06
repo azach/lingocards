@@ -29,13 +29,13 @@ export const markIncorrect = (word) => {
 };
 
 export const getNextWord = ({ sessionBuckets, setSessionBuckets }) => {
-  const buckets = Object.keys(sessionBuckets);
+  const buckets = Object.keys(sessionBuckets).map(Number).sort();
 
   if (!buckets.length) {
     return;
   }
 
-  const weights = buckets.map((val) => 100 / Math.pow(2, Number(val)));
+  const weights = buckets.map((val) => 100 / Math.pow(2, val));
   const totalWeight = weights.reduce((acc, curr) => acc + curr, 0);
   const randomWeight = Math.random() * totalWeight;
 
