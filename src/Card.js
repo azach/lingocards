@@ -72,6 +72,7 @@ function Card({ original, translation, cardIndex, nextWord }) {
         <div className="card-footer">
           <div>
             <span
+              title="Remove word"
               className="card-remove-word"
               onClick={(e) => {
                 e.stopPropagation();
