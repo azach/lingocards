@@ -111,6 +111,11 @@ button, .File-upload {
   font-size: 16px;
   box-shadow: 0 2px 4px 0 rgba(115, 132, 157, 0.1);
 
+  &:hover {
+    background-color: rgba(115, 132, 157, 0.8);
+    transition: background 0.3s ease 0s, border-color 0.3s ease 0s;
+  }
+
   &:active {
     transform: translate3d(1px, 2px, 0px);
     box-shadow: 0 0 0;
@@ -119,14 +124,29 @@ button, .File-upload {
 
   &.primary {
     background-color: #ff5722;
+
+    &:hover {
+      transition: background 0.3s ease 0s, border-color 0.3s ease 0s;
+      background-color: rgba(255, 87, 34, 0.8);
+    }
   }
 
   &.success {
     background-color: #27ae60;
+
+    &:hover {
+      transition: background 0.3s ease 0s, border-color 0.3s ease 0s;
+      background-color: rgba(39, 174, 96, 0.8);
+    }
   }
 
   &.failure {
     background-color: #e74c3c;
+
+    &:hover {
+      transition: background 0.3s ease 0s, border-color 0.3s ease 0s;
+      background-color: rgba(231, 76, 60, 0.8);
+    }
   }
 
   &.small {
