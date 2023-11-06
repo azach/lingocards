@@ -1,3 +1,5 @@
+import "./Card.css";
+
 import { useEffect, useState } from "react";
 
 import ReactCardFlip from "react-card-flip";
@@ -22,13 +24,13 @@ function Card({ original, translation, cardIndex, nextWord }) {
   return (
     <div
       onClick={() => setIsFlipped(!isFlipped)}
-      className={`Card-wrapper ${isFlipped ? "back" : "front"}`}
+      className={`card-wrapper ${isFlipped ? "back" : "front"}`}
     >
       <ReactCardFlip
         isFlipped={isFlipped}
         flipSpeedBackToFront={0}
         flipSpeedFrontToBack={0}
-        containerClassName="Card-body"
+        containerClassName="card-body"
         cardStyles={{
           front: {
             display: "flex",
@@ -42,11 +44,11 @@ function Card({ original, translation, cardIndex, nextWord }) {
           },
         }}
       >
-        <p className="Card-text">{original}</p>
-        <p className="Card-text">{translation || "Unknown"}</p>
+        <p className="card-text">{original}</p>
+        <p className="card-text">{translation || "Unknown"}</p>
       </ReactCardFlip>
 
-      <div className="Card-externaLinkContainer">
+      <div className="card-external-link-wrapper">
         <a
           href={`https://translate.google.com/?sl=el&tl=en&text=${original}&op=translate`}
           target="_blank"
@@ -66,11 +68,11 @@ function Card({ original, translation, cardIndex, nextWord }) {
         </a>
       </div>
 
-      <div className="Card-footer-wrapper">
-        <div className="Card-footer">
+      <div className="card-footer-wrapper">
+        <div className="card-footer">
           <div>
             <span
-              className="Card-removeWord"
+              className="card-remove-word"
               onClick={(e) => {
                 e.stopPropagation();
                 removeWordFromCachedWorkBank(

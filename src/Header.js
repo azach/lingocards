@@ -22,7 +22,7 @@ function Header() {
   };
 
   return (
-    <div className="Button-row">
+    <div className="button-row">
       <button
         className="small"
         onClick={() => setShowActions(!showActions)}
@@ -46,7 +46,7 @@ function Header() {
             Add new word
           </button>
 
-          <label htmlFor="file-upload" className="File-upload small">
+          <label htmlFor="file-upload" className="file-upload small">
             Import words
           </label>
           <input id="file-upload" type="file" onChange={importFile} />

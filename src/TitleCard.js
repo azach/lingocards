@@ -5,9 +5,9 @@ import thumbsDown from "./assets/thumbs-down.png";
 
 function TitleCard({ text }) {
   return (
-    <div className="Card-wrapper title">
+    <div className="card-wrapper title">
       <ReactCardFlip
-        containerClassName="Card-body"
+        containerClassName="card-body"
         cardStyles={{
           front: {
             display: "flex",
@@ -21,8 +21,8 @@ function TitleCard({ text }) {
           },
         }}
       >
-        <p className="Card-text">{text}</p>
-        <p className="Card-text">{text}</p>
+        <p className="card-text">{text}</p>
+        <p className="card-text">{text}</p>
       </ReactCardFlip>
     </div>
   );

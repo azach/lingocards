@@ -149,11 +149,11 @@ function App() {
   }, [cardIndex, sessionWords]);
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="app">
+      <header className="app-header">
         <Header />
       </header>
-      <main className="App-body">
+      <main className="app-body">
         {cardResult === RESULT_SUCCESS && <SuccessTitleCard />}
 
         {cardResult === RESULT_MISS && <MissTitleCard />}
@@ -179,16 +179,20 @@ function App() {
           </>
         )}
 
-        <div style={{ marginTop: "20px" }}>
-          <input
-            type="checkbox"
-            id="swapCardOrder"
-            onChange={(e) => setSwapCardOrder(e.target.checked)}
-          ></input>
-          <label htmlFor="swapCardOrder">Show translation first</label>
+        <div style={{ marginTop: "40px" }}>
+          <div className="button-row">
+            <div>
+              <input
+                type="checkbox"
+                id="swapCardOrder"
+                onChange={(e) => setSwapCardOrder(e.target.checked)}
+              ></input>
+              <label htmlFor="swapCardOrder">Show translation first</label>
+            </div>
+          </div>
         </div>
 
-        <div className="Button-row" style={{ marginTop: "40px" }}>
+        <div className="button-row" style={{ marginTop: "40px" }}>
           {cardIndex === sessionWords.length && (
             <button className="failure" onClick={initializeSession}>
               New session
@@ -211,7 +215,7 @@ function App() {
         </div>
       </main>
 
-      <footer className="App-footer"></footer>
+      <footer className="app-footer"></footer>
     </div>
   );
 }
