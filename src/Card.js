@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 
 import ReactCardFlip from "react-card-flip";
+import { removeWordFromCachedWorkBank } from "./translations";
 import { useEventListener } from "./useEventListener";
 
 const SPACEBAR = " ";
 
-function Card({ original, translation, cardIndex }) {
+function Card({ original, translation, cardIndex, nextWord }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
@@ -13,7 +14,7 @@ function Card({ original, translation, cardIndex }) {
   }, [original]);
 
   useEventListener("keydown", (e) => {
-    if (e.key === SPACEBAR) {
+    if (e.key === SPACEBAR || e.key === "w") {
       setIsFlipped(!isFlipped);
     }
   });
@@ -65,7 +66,25 @@ function Card({ original, translation, cardIndex }) {
         </a>
       </div>
 
-      <div className="Card-footer">{cardIndex}</div>
+      <div className="Card-footer-wrapper">
+        <div className="Card-footer">
+          <div>
+            <span
+              className="Card-removeWord"
+              onClick={(e) => {
+                e.stopPropagation();
+                removeWordFromCachedWorkBank(
+                  isFlipped ? translation : original
+                );
+                nextWord();
+              }}
+            >
+              &#10540;
+            </span>
+          </div>
+          <div>{cardIndex}</div>
+        </div>
+      </div>
     </div>
   );
 }

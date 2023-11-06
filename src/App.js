@@ -175,6 +175,7 @@ function App() {
                 original={swapCardOrder ? card.translation : card.original}
                 translation={swapCardOrder ? card.original : card.translation}
                 cardIndex={cardIndex}
+                nextWord={nextWord}
               />
             )}
           </>

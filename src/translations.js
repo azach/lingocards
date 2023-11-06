@@ -72,3 +72,14 @@ export function addWordsToCachedWorkBank(words) {
     JSON.stringify([...new Set(cachedWordBank)])
   );
 }
+
+export function removeWordFromCachedWorkBank(word) {
+  let cachedWordBank = JSON.parse(localStorage.getItem("word_bank")) || [];
+
+  cachedWordBank = cachedWordBank.filter((w) => w !== word).filter(Boolean);
+
+  localStorage.setItem(
+    "word_bank",
+    JSON.stringify([...new Set(cachedWordBank)])
+  );
+}
