@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { addWordsToCachedWorkBank } from "./translations";
+import { addWordsToCachedWorkBank, getCachedWordBank } from "./translations";
 
 function Header() {
   const importFile = (e) => {
@@ -38,6 +38,23 @@ function Header() {
         <a href="#">
           <label htmlFor="file-upload">Import words</label>
           <input id="file-upload" type="file" onChange={importFile} />
+        </a>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.stopPropagation();
+
+            const blob = new Blob([getCachedWordBank().sort().join("\n")], {
+              type: "text/plain",
+            });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.download = "words.txt";
+            link.href = url;
+            link.click();
+          }}
+        >
+          Export words
         </a>
       </div>
     </div>
