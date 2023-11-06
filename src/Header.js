@@ -1,9 +1,7 @@
-import { useState } from "react";
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { addWordsToCachedWorkBank } from "./translations";
 
 function Header() {
-  const [showActions, setShowActions] = useState(false);
-
   const importFile = (e) => {
     const file = e.target.files[0];
 
@@ -22,36 +20,26 @@ function Header() {
   };
 
   return (
-    <div className="button-row">
-      <button
-        className="small"
-        onClick={() => setShowActions(!showActions)}
-        style={{ padding: "11px 14px" }}
-      >
-        {showActions ? "←" : "→"}
-      </button>
+    <div class="dropdown">
+      <button class="small">Settings</button>
+      <div class="dropdown-content">
+        <a
+          href="#"
+          onClick={() => {
+            const response = window.prompt("Enter word to add");
 
-      {showActions && (
-        <>
-          <button
-            className="small"
-            onClick={() => {
-              const response = window.prompt("Enter word to add");
-
-              if (response) {
-                addWordsToCachedWorkBank([response.trim()]);
-              }
-            }}
-          >
-            Add new word
-          </button>
-
-          <label htmlFor="file-upload" className="file-upload small">
-            Import words
-          </label>
+            if (response) {
+              addWordsToCachedWorkBank([response.trim()]);
+            }
+          }}
+        >
+          Add new word
+        </a>
+        <a href="#">
+          <label htmlFor="file-upload">Import words</label>
           <input id="file-upload" type="file" onChange={importFile} />
-        </>
-      )}
+        </a>
+      </div>
     </div>
   );
 }
