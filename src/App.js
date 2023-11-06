@@ -203,15 +203,16 @@ function App() {
         )}
 
         <div style={{ marginTop: "40px" }}>
-          <div className="button-row">
-            <div>
+          <div className="button-row" style={{ gap: "30px" }}>
+            <label className="checkbox-container" htmlFor="swapCardOrder">
               <input
                 type="checkbox"
                 id="swapCardOrder"
                 onChange={(e) => setSwapCardOrder(e.target.checked)}
-              ></input>
-              <label htmlFor="swapCardOrder">Show translation first</label>
-            </div>
+              />
+              <span class="checkmark"></span>
+              Show translation first
+            </label>
 
             <Select
               className="select-dropdown"
