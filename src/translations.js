@@ -18,7 +18,7 @@ export function addWordsToCachedWorkBank(words) {
   const cachedTranslations =
     JSON.parse(localStorage.getItem("translations")) || {};
 
-  words.forEach((word) => (cachedTranslations[word] = null));
+  words.forEach((word) => (cachedTranslations[word] ||= null));
 
   localStorage.setItem("translations", JSON.stringify(cachedTranslations));
 }
