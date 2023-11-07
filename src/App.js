@@ -70,12 +70,9 @@ function App() {
   };
 
   const nextWord = () => {
-    setCardResult(null);
-
     if (sessionLength && cardIndex >= sessionLength - 1) {
       // End of session with set session length
       setCardIndex(sessionWords.length);
-      setCard(null);
     } else if (cardIndex < sessionWords.length - 1) {
       setCardIndex(cardIndex + 1);
     } else {
@@ -87,7 +84,6 @@ function App() {
       } else {
         // End of session without set session length
         setCardIndex(sessionWords.length);
-        setCard(null);
       }
     }
   };
@@ -95,10 +91,10 @@ function App() {
   const gotWord = () => {
     if (card) {
       markCorrect(card.original);
+      nextWord();
+
       setCardResult(RESULT_SUCCESS);
-      setTimeout(() => {
-        nextWord();
-      }, STATUS_TIMEOUT_MS);
+      setTimeout(() => setCardResult(null), STATUS_TIMEOUT_MS);
     } else {
       nextWord();
     }
@@ -107,10 +103,10 @@ function App() {
   const missedWord = () => {
     if (card) {
       markIncorrect(card.original);
+      nextWord();
+
       setCardResult(RESULT_MISS);
-      setTimeout(() => {
-        nextWord();
-      }, STATUS_TIMEOUT_MS);
+      setTimeout(() => setCardResult(null), STATUS_TIMEOUT_MS);
     } else {
       nextWord();
     }
@@ -130,7 +126,6 @@ function App() {
       case "a":
         missedWord();
         break;
-
       default:
     }
   });
