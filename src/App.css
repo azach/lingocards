@@ -190,3 +190,21 @@ button,
     transform: rotate(45deg);
   }
 }
+
+.text {
+  &.success {
+    color: #27ae60;
+
+    &.dark {
+      color: #56d68b;
+    }
+  }
+
+  &.failure {
+    color: #e74c3c;
+
+    &.dark {
+      color: #f4695b;
+    }
+  }
+}

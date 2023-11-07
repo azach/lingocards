@@ -8,6 +8,7 @@ import {
   DEFAULT_SESSION_LENGTH,
   getBucket,
   getNextWord,
+  getScore,
   markCorrect,
   markIncorrect,
   SESSION_LENGTHS,
@@ -192,6 +193,7 @@ function App() {
                 translation={swapCardOrder ? card.original : card.translation}
                 cardIndex={cardIndex}
                 nextWord={nextWord}
+                score={getScore(card.original)}
               />
             )}
           </>

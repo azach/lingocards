@@ -8,7 +8,7 @@ import { useEventListener } from "./useEventListener";
 
 const SPACEBAR = " ";
 
-function Card({ original, translation, cardIndex, nextWord }) {
+function Card({ original, score, translation, cardIndex, nextWord }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
@@ -48,24 +48,32 @@ function Card({ original, translation, cardIndex, nextWord }) {
         <p className="card-text">{translation || "Unknown"}</p>
       </ReactCardFlip>
 
-      <div className="card-external-link-wrapper">
-        <a
-          href={`https://translate.google.com/?sl=el&tl=en&text=${original}&op=translate`}
-          target="_blank"
-          rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}
-        >
-          Google Translate &#8599;
-        </a>
-        <span style={{ marginRight: "14px" }} />
-        <a
-          href={`https://www.wordreference.com/gren/${original}`}
-          target="_blank"
-          rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}
-        >
-          Dictionary &#8599;
-        </a>
+      <div className="card-header-wrapper">
+        <div className="card-header">
+          <div style={{ display: "grid", gap: "10px", gridAutoFlow: "column" }}>
+            <span className="text dark success">↑{score.correct}</span>
+            <span className="text dark failure">↓{score.incorrect}</span>
+          </div>
+          <div>
+            <a
+              href={`https://translate.google.com/?sl=el&tl=en&text=${original}&op=translate`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Google Translate &#8599;
+            </a>
+            <span style={{ marginRight: "14px" }} />
+            <a
+              href={`https://www.wordreference.com/gren/${original}`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Dictionary &#8599;
+            </a>
+          </div>
+        </div>
       </div>
 
       <div className="card-footer-wrapper">

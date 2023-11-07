@@ -14,6 +14,16 @@ export const getBucket = (word) => {
   return Math.max(cachedWord["bucket"] || 0, 0);
 };
 
+export const getScore = (word) => {
+  const scores = JSON.parse(localStorage.getItem("scores")) || {};
+  const cachedWord = scores[word] || {};
+
+  return {
+    correct: Math.max(cachedWord["correct"] || 0, 0),
+    incorrect: Math.max(cachedWord["incorrect"] || 0, 0),
+  };
+};
+
 export const markCorrect = (word) => {
   const scores = JSON.parse(localStorage.getItem("scores")) || {};
   const cachedWord = scores[word] || {};
