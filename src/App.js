@@ -229,13 +229,23 @@ function App() {
 
           {cardIndex < sessionWords.length && (
             <>
-              <button className="failure" onClick={missedWord}>
+              <button
+                className="failure"
+                onClick={missedWord}
+                onKeyDown={(e) => e.preventDefault()}
+              >
                 Miss
               </button>
 
-              <button onClick={nextWord}>Next word</button>
+              <button onClick={nextWord} onKeyDown={(e) => e.preventDefault()}>
+                Next word
+              </button>
 
-              <button className="success" onClick={gotWord}>
+              <button
+                className="success"
+                onClick={gotWord}
+                onKeyDown={(e) => e.preventDefault()}
+              >
                 Correct
               </button>
             </>

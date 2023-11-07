@@ -44,8 +44,8 @@ function Card({ original, score, translation, cardIndex, nextWord }) {
           },
         }}
       >
-        <p className="card-text">{original}</p>
-        <p className="card-text">{translation || "Unknown"}</p>
+        <p className="card-text center">{original}</p>
+        <p className="card-text center">{translation || "Unknown"}</p>
       </ReactCardFlip>
 
       <div className="card-header-wrapper">
