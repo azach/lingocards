@@ -1,10 +1,11 @@
 import { shuffle } from "./utilities";
 
-export const DEFAULT_SESSION_LENGTH = 20;
+export const DEFAULT_SESSION_LENGTH = 25;
 export const SESSION_LENGTHS = [
   { value: null, label: "All words" },
   { value: 50, label: 50 },
-  { value: 20, label: 20 },
+  { value: 25, label: 25 },
+  { value: 10, label: 10 },
   { value: 5, label: 5 },
 ];
 
