@@ -1,16 +1,18 @@
 {
   "files": {
-    "main.css": "/lingocards/static/css/main.a2aa5e8b.css",
-    "main.js": "/lingocards/static/js/main.7dea9a8f.js",
+    "main.css": "/lingocards/static/css/main.b125bd3e.css",
+    "main.js": "/lingocards/static/js/main.025ec768.js",
+    "static/media/snooze.png": "/lingocards/static/media/snooze.608d28118606edf79b99.png",
     "static/media/thumbs-up.png": "/lingocards/static/media/thumbs-up.09d9baeffa1bb70aac15.png",
     "static/media/thumbs-down.png": "/lingocards/static/media/thumbs-down.099fe9c7e44e55ef61a4.png",
+    "static/media/trash.png": "/lingocards/static/media/trash.95e3bba8c4422000dee4.png",
     "static/media/star.png": "/lingocards/static/media/star.6a69830a603a0db37114.png",
     "index.html": "/lingocards/index.html",
-    "main.a2aa5e8b.css.map": "/lingocards/static/css/main.a2aa5e8b.css.map",
-    "main.7dea9a8f.js.map": "/lingocards/static/js/main.7dea9a8f.js.map"
+    "main.b125bd3e.css.map": "/lingocards/static/css/main.b125bd3e.css.map",
+    "main.025ec768.js.map": "/lingocards/static/js/main.025ec768.js.map"
   },
   "entrypoints": [
-    "static/css/main.a2aa5e8b.css",
-    "static/js/main.7dea9a8f.js"
+    "static/css/main.b125bd3e.css",
+    "static/js/main.025ec768.js"
   ]
 }
