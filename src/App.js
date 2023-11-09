@@ -35,11 +35,17 @@ const RESULT_MISS = "miss";
 function App() {
   const [cardIndex, setCardIndex] = useState(-1);
   const [card, setCard] = useState(null);
-  const [swapCardOrder, setSwapCardOrder] = useState(false);
+  const [swapCardOrder, setSwapCardOrder] = useState(
+    localStorage.getItem("swap_card_order") === "true"
+  );
 
   const [sessionWords, setSessionWords] = useState([]);
   const [sessionBuckets, setSessionBuckets] = useState(null);
-  const [sessionLength, setSessionLength] = useState(DEFAULT_SESSION_LENGTH);
+  const [sessionLength, setSessionLength] = useState(
+    localStorage.getItem("session_length") === "null"
+      ? null
+      : Number(localStorage.getItem("session_length") || DEFAULT_SESSION_LENGTH)
+  );
   const [cardResult, setCardResult] = useState(null);
 
   const initializeSession = () => {
@@ -209,7 +215,11 @@ function App() {
               <input
                 type="checkbox"
                 id="swapCardOrder"
-                onChange={(e) => setSwapCardOrder(e.target.checked)}
+                checked={swapCardOrder}
+                onChange={(e) => {
+                  localStorage.setItem("swap_card_order", e.target.checked);
+                  setSwapCardOrder(e.target.checked);
+                }}
               />
               <span class="checkmark"></span>
               Show translation first
@@ -218,8 +228,12 @@ function App() {
             <Select
               className="select-dropdown"
               placeholder="Session length"
-              onChange={(e) => setSessionLength(e.value)}
+              value={SESSION_LENGTHS.find((o) => o.value === sessionLength)}
               options={SESSION_LENGTHS}
+              onChange={(e) => {
+                localStorage.setItem("session_length", e.value);
+                setSessionLength(e.value);
+              }}
             ></Select>
           </div>
         </div>
