@@ -38,6 +38,7 @@ function App() {
   const [swapCardOrder, setSwapCardOrder] = useState(
     localStorage.getItem("swap_card_order") === "true"
   );
+  const [totalWords, setTotalWords] = useState(null);
 
   const [sessionWords, setSessionWords] = useState([]);
   const [sessionBuckets, setSessionBuckets] = useState(null);
@@ -49,8 +50,9 @@ function App() {
   const [cardResult, setCardResult] = useState(null);
 
   const initializeSession = () => {
+    const wordBank = getCachedWordBank();
     const sessionWordBank = shuffle(
-      getCachedWordBank().filter((word) => !isSnoozed(word))
+      wordBank.filter((word) => !isSnoozed(word))
     );
 
     const newSessionBuckets = {};
@@ -61,6 +63,7 @@ function App() {
       newSessionBuckets[wordBucket].add(word);
     });
 
+    setTotalWords(wordBank.length);
     setSessionBuckets(newSessionBuckets);
     setSessionWords([]);
     setCard(null);
@@ -179,7 +182,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <Header />
+        <Header totalWords={totalWords} />
       </header>
       <main className="app-body">
         {cardResult === RESULT_SUCCESS && <SuccessTitleCard />}

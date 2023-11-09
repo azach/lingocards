@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { addWordsToCachedWorkBank, getCachedWordBank } from "./translations";
 
-function Header() {
+function Header({ totalWords }) {
   const importFile = (e) => {
     const file = e.target.files[0];
 
@@ -54,7 +54,7 @@ function Header() {
             link.click();
           }}
         >
-          Export words
+          {totalWords ? `Export ${totalWords} words` : "Export words"}
         </a>
       </div>
     </div>
