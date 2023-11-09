@@ -197,6 +197,7 @@ function App() {
                 cardIndex={cardIndex}
                 nextWord={nextWord}
                 score={getScore(card.original)}
+                isOrderSwapped={swapCardOrder}
               />
             )}
           </>

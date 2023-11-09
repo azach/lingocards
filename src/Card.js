@@ -13,7 +13,14 @@ import trash from "./assets/trash.png";
 const SPACEBAR = " ";
 const SNOOZE_WEEKS = 1;
 
-function Card({ original, score, translation, cardIndex, nextWord }) {
+function Card({
+  original,
+  score,
+  translation,
+  cardIndex,
+  nextWord,
+  isOrderSwapped,
+}) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isMouseOver, setIsMouseOver] = useState(false);
 
@@ -31,7 +38,7 @@ function Card({ original, score, translation, cardIndex, nextWord }) {
     const snoozeDate = new Date();
     snoozeDate.setDate(snoozeDate.getDate() + SNOOZE_WEEKS * 7);
 
-    setSnooze(isFlipped ? translation : original, Number(snoozeDate));
+    setSnooze(isOrderSwapped ? translation : original, Number(snoozeDate));
 
     nextWord();
   };
@@ -73,7 +80,9 @@ function Card({ original, score, translation, cardIndex, nextWord }) {
           </div>
           <div>
             <a
-              href={`https://translate.google.com/?sl=el&tl=en&text=${original}&op=translate`}
+              href={`https://translate.google.com/?sl=el&tl=en&text=${
+                isOrderSwapped ? translation : original
+              }&op=translate`}
               target="_blank"
               rel="noreferrer"
               onClick={(e) => e.stopPropagation()}
@@ -82,7 +91,9 @@ function Card({ original, score, translation, cardIndex, nextWord }) {
             </a>
             <span style={{ marginRight: "14px" }} />
             <a
-              href={`https://www.wordreference.com/gren/${original}`}
+              href={`https://www.wordreference.com/gren/${
+                isOrderSwapped ? translation : original
+              }`}
               target="_blank"
               rel="noreferrer"
               onClick={(e) => e.stopPropagation()}
@@ -104,7 +115,9 @@ function Card({ original, score, translation, cardIndex, nextWord }) {
               className="card-action"
               onClick={(e) => {
                 e.stopPropagation();
-                deleteCachedTranslation(isFlipped ? translation : original);
+                deleteCachedTranslation(
+                  isOrderSwapped ? translation : original
+                );
                 nextWord();
               }}
             >
