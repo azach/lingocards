@@ -49,6 +49,39 @@ export const markIncorrect = (word) => {
   localStorage.setItem("scores", JSON.stringify(scores));
 };
 
+export const getSnooze = (word) => {
+  const snoozed = JSON.parse(localStorage.getItem("snoozed")) || {};
+  return snoozed[word];
+};
+
+export const setSnooze = (word, date) => {
+  const snoozed = JSON.parse(localStorage.getItem("snoozed")) || {};
+
+  if (!date) {
+    delete snoozed[word];
+  } else {
+    snoozed[word] = date;
+  }
+
+  localStorage.setItem("snoozed", JSON.stringify(snoozed));
+};
+
+export const isSnoozed = (word) => {
+  const snoozedUntil = getSnooze(word);
+
+  if (!snoozedUntil) {
+    return false;
+  }
+
+  if (snoozedUntil >= Number(new Date())) {
+    return true;
+  }
+
+  setSnooze(word, null);
+
+  return true;
+};
+
 export const getNextWord = ({ sessionBuckets, setSessionBuckets }) => {
   const buckets = Object.keys(sessionBuckets).map(Number).sort();
 

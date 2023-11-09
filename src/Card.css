@@ -29,7 +29,7 @@
   position: absolute;
   top: 0;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 15px;
 
   > .card-header {
     margin: 0 20px;
@@ -48,7 +48,8 @@
   position: absolute;
   bottom: 0;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+
   color: #b4b9c3;
 
   > .card-footer {
@@ -68,10 +69,10 @@
   overflow: scroll;
 }
 
-.card-remove-word {
-  font-size: 2em;
+.card-action {
+  opacity: 0.5;
 
   &:hover {
-    color: #ff5722;
+    opacity: 1;
   }
 }

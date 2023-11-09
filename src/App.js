@@ -9,6 +9,7 @@ import {
   getBucket,
   getNextWord,
   getScore,
+  isSnoozed,
   markCorrect,
   markIncorrect,
   SESSION_LENGTHS,
@@ -42,7 +43,9 @@ function App() {
   const [cardResult, setCardResult] = useState(null);
 
   const initializeSession = () => {
-    const sessionWordBank = shuffle(getCachedWordBank());
+    const sessionWordBank = shuffle(
+      getCachedWordBank().filter((word) => !isSnoozed(word))
+    );
 
     const newSessionBuckets = {};
 
