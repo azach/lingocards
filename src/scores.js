@@ -12,9 +12,11 @@ export const SESSION_LENGTHS = [
 const MAX_BUCKET = 6;
 
 export const getBucket = (word) => {
-  const scores = JSON.parse(localStorage.getItem("scores")) || {};
-  const cachedWord = scores[word] || {};
-  return Math.max(cachedWord["bucket"] || 0, 0);
+  const scores = getScore(word);
+  const netScore = Math.max(scores.correct - scores.incorrect, 0);
+  const scoreToRawBucket = Math.floor(Math.log(netScore + 3));
+
+  return Math.min(Math.max(scoreToRawBucket, 1), MAX_BUCKET);
 };
 
 export const getScore = (word) => {
@@ -89,9 +91,7 @@ export const getNextWord = ({ sessionBuckets, setSessionBuckets }) => {
     return;
   }
 
-  const weights = buckets
-    .map((val) => Math.min(val / Math.max(buckets[0], 1), MAX_BUCKET)) // Normalize
-    .map((val) => 100 / Math.pow(2, val));
+  const weights = buckets.map((val) => 100 / Math.pow(2, val));
   const totalWeight = weights.reduce((acc, curr) => acc + curr, 0);
   const randomWeight = Math.random() * totalWeight;
 

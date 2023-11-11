@@ -224,7 +224,7 @@ function App() {
                   setSwapCardOrder(e.target.checked);
                 }}
               />
-              <span class="checkmark"></span>
+              <span className="checkmark"></span>
               Show translation first
             </label>
 

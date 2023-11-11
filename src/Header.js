@@ -20,9 +20,9 @@ function Header({ totalWords }) {
   };
 
   return (
-    <div class="dropdown">
-      <button class="small">Settings</button>
-      <div class="dropdown-content">
+    <div className="dropdown">
+      <button className="small">Settings</button>
+      <div className="dropdown-content">
         <a
           href="#"
           onClick={() => {
