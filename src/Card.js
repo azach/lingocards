@@ -7,11 +7,42 @@ import { deleteCachedTranslation } from "./translations";
 import { useEventListener } from "./useEventListener";
 import { setSnooze } from "./scores";
 
+import google from "./assets/google.png";
 import snoozeIcon from "./assets/snooze.png";
 import trash from "./assets/trash.png";
+import wiki from "./assets/wiki.png";
+import wordreference from "./assets/wordreference.png";
 
 const SPACEBAR = " ";
 const SNOOZE_WEEKS = 1;
+
+function ExternalLink({ href, alt, src }) {
+  return (
+    <span
+      className="card-action"
+      style={{
+        display: "inline-block",
+        height: "25px",
+      }}
+    >
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img alt={alt} height="25" width="25" src={src} />
+        <span
+          style={{
+            marginLeft: "5px",
+          }}
+        >
+          &#8599;
+        </span>
+      </a>
+    </span>
+  );
+}
 
 function Card({
   original,
@@ -79,27 +110,29 @@ function Card({
             <span className="text dark failure">↓{score.incorrect}</span>
           </div>
           <div>
-            <a
+            <ExternalLink
+              href={`https://en.wiktionary.org/wiki/${
+                isOrderSwapped ? translation : original
+              }`}
+              alt="Wiktionary"
+              src={wiki}
+            />
+            <span style={{ marginRight: "14px" }} />
+            <ExternalLink
               href={`https://translate.google.com/?sl=el&tl=en&text=${
                 isOrderSwapped ? translation : original
               }&op=translate`}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Google Translate &#8599;
-            </a>
+              alt="Google Translate"
+              src={google}
+            />
             <span style={{ marginRight: "14px" }} />
-            <a
+            <ExternalLink
               href={`https://www.wordreference.com/gren/${
                 isOrderSwapped ? translation : original
               }`}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Dictionary &#8599;
-            </a>
+              alt="Word Reference"
+              src={wordreference}
+            />
           </div>
         </div>
       </div>
