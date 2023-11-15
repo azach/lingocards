@@ -18,13 +18,7 @@ const SNOOZE_WEEKS = 1;
 
 function ExternalLink({ href, alt, src }) {
   return (
-    <span
-      className="card-action"
-      style={{
-        display: "inline-block",
-        height: "25px",
-      }}
-    >
+    <span className="card-action">
       <a
         href={href}
         target="_blank"
@@ -32,13 +26,6 @@ function ExternalLink({ href, alt, src }) {
         onClick={(e) => e.stopPropagation()}
       >
         <img alt={alt} height="25" width="25" src={src} />
-        <span
-          style={{
-            marginLeft: "5px",
-          }}
-        >
-          &#8599;
-        </span>
       </a>
     </span>
   );
@@ -109,7 +96,7 @@ function Card({
             <span className="text dark success">↑{score.correct}</span>
             <span className="text dark failure">↓{score.incorrect}</span>
           </div>
-          <div>
+          <div className="button-row">
             <ExternalLink
               href={`https://en.wiktionary.org/wiki/${
                 isOrderSwapped ? translation : original
@@ -117,7 +104,6 @@ function Card({
               alt="Wiktionary"
               src={wiki}
             />
-            <span style={{ marginRight: "14px" }} />
             <ExternalLink
               href={`https://translate.google.com/?sl=el&tl=en&text=${
                 isOrderSwapped ? translation : original
@@ -125,7 +111,6 @@ function Card({
               alt="Google Translate"
               src={google}
             />
-            <span style={{ marginRight: "14px" }} />
             <ExternalLink
               href={`https://www.wordreference.com/gren/${
                 isOrderSwapped ? translation : original
