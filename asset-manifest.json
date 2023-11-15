@@ -1,18 +1,21 @@
 {
   "files": {
     "main.css": "/lingocards/static/css/main.ab788407.css",
-    "main.js": "/lingocards/static/js/main.541a12fe.js",
+    "main.js": "/lingocards/static/js/main.3b6a8972.js",
+    "static/media/wordreference.png": "/lingocards/static/media/wordreference.76dd637ac114e154f47c.png",
     "static/media/snooze.png": "/lingocards/static/media/snooze.608d28118606edf79b99.png",
     "static/media/thumbs-up.png": "/lingocards/static/media/thumbs-up.09d9baeffa1bb70aac15.png",
     "static/media/thumbs-down.png": "/lingocards/static/media/thumbs-down.099fe9c7e44e55ef61a4.png",
     "static/media/trash.png": "/lingocards/static/media/trash.95e3bba8c4422000dee4.png",
     "static/media/star.png": "/lingocards/static/media/star.6a69830a603a0db37114.png",
+    "static/media/google.png": "/lingocards/static/media/google.2c3dd7bde9497670baee.png",
+    "static/media/wiki.png": "/lingocards/static/media/wiki.227fb1d6c245958278c0.png",
     "index.html": "/lingocards/index.html",
     "main.ab788407.css.map": "/lingocards/static/css/main.ab788407.css.map",
-    "main.541a12fe.js.map": "/lingocards/static/js/main.541a12fe.js.map"
+    "main.3b6a8972.js.map": "/lingocards/static/js/main.3b6a8972.js.map"
   },
   "entrypoints": [
     "static/css/main.ab788407.css",
-    "static/js/main.541a12fe.js"
+    "static/js/main.3b6a8972.js"
   ]
 }
