@@ -105,7 +105,7 @@ function Card({
               src={wiki}
             />
             <ExternalLink
-              href={`https://translate.google.com/?sl=el&tl=en&text=${
+              href={`https://translate.google.com/details?sl=el&tl=en&text=${
                 isOrderSwapped ? translation : original
               }&op=translate`}
               alt="Google Translate"
