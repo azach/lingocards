@@ -14,7 +14,7 @@ const MAX_BUCKET = 6;
 export const getBucket = (word) => {
   const scores = getScore(word);
   const netScore = Math.max(scores.correct - scores.incorrect, 0);
-  const scoreToRawBucket = Math.floor(Math.log(netScore + 3));
+  const scoreToRawBucket = Math.floor(Math.log2(netScore + 3));
 
   return Math.min(Math.max(scoreToRawBucket, 1), MAX_BUCKET);
 };
