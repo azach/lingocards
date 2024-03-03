@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/lingocards/static/css/main.ab788407.css",
-    "main.js": "/lingocards/static/js/main.06e3ef1e.js",
+    "main.js": "/lingocards/static/js/main.3def29be.js",
     "static/media/wordreference.png": "/lingocards/static/media/wordreference.76dd637ac114e154f47c.png",
     "static/media/snooze.png": "/lingocards/static/media/snooze.608d28118606edf79b99.png",
     "static/media/thumbs-up.png": "/lingocards/static/media/thumbs-up.09d9baeffa1bb70aac15.png",
@@ -12,10 +12,10 @@
     "static/media/wiki.png": "/lingocards/static/media/wiki.227fb1d6c245958278c0.png",
     "index.html": "/lingocards/index.html",
     "main.ab788407.css.map": "/lingocards/static/css/main.ab788407.css.map",
-    "main.06e3ef1e.js.map": "/lingocards/static/js/main.06e3ef1e.js.map"
+    "main.3def29be.js.map": "/lingocards/static/js/main.3def29be.js.map"
   },
   "entrypoints": [
     "static/css/main.ab788407.css",
-    "static/js/main.06e3ef1e.js"
+    "static/js/main.3def29be.js"
   ]
 }
