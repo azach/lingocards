@@ -12,6 +12,7 @@ import {
   isSnoozed,
   markCorrect,
   markIncorrect,
+  SESSION_ALGORITHMS,
   SESSION_LENGTHS,
 } from "./scores";
 import TitleCard, {
@@ -46,6 +47,9 @@ function App() {
     localStorage.getItem("session_length") === "null"
       ? null
       : Number(localStorage.getItem("session_length") || DEFAULT_SESSION_LENGTH)
+  );
+  const [sessionAlgorithm, setSessionAlgorithm] = useState(
+    localStorage.getItem("session_algorithm")
   );
   const [cardResult, setCardResult] = useState(null);
 
@@ -89,7 +93,11 @@ function App() {
     } else if (cardIndex < sessionWords.length - 1) {
       setCardIndex(cardIndex + 1);
     } else {
-      const nextWord = getNextWord({ sessionBuckets, setSessionBuckets });
+      const nextWord = getNextWord({
+        sessionBuckets,
+        setSessionBuckets,
+        sessionAlgorithm,
+      });
 
       if (nextWord) {
         setSessionWords([...sessionWords, nextWord]);
@@ -242,7 +250,20 @@ function App() {
                 localStorage.setItem("session_length", e.value);
                 setSessionLength(e.value);
               }}
-            ></Select>
+            />
+
+            <Select
+              className="select-dropdown"
+              placeholder="Session algorithm"
+              value={SESSION_ALGORITHMS.find(
+                (o) => o.value === sessionAlgorithm
+              )}
+              options={SESSION_ALGORITHMS}
+              onChange={(e) => {
+                localStorage.setItem("session_algorithm", e.value);
+                setSessionAlgorithm(e.value);
+              }}
+            />
           </div>
         </div>
 

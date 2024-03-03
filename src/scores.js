@@ -9,6 +9,11 @@ export const SESSION_LENGTHS = [
   { value: 5, label: 5 },
 ];
 
+export const SESSION_ALGORITHMS = [
+  { value: null, label: "Default" },
+  { value: "random", label: "Random" },
+];
+
 const MAX_BUCKET = 6;
 
 export const getBucket = (word) => {
@@ -84,25 +89,43 @@ export const isSnoozed = (word) => {
   return true;
 };
 
-export const getNextWord = ({ sessionBuckets, setSessionBuckets }) => {
+export const getNextWord = ({
+  sessionBuckets,
+  setSessionBuckets,
+  sessionAlgorithm,
+}) => {
   const buckets = Object.keys(sessionBuckets).map(Number).sort();
 
   if (!buckets.length) {
     return;
   }
 
-  const weights = buckets.map((val) => 100 / Math.pow(2, val));
-  const totalWeight = weights.reduce((acc, curr) => acc + curr, 0);
-  const randomWeight = Math.random() * totalWeight;
+  let bucketValue;
+  let nextWord;
 
-  let i = 0;
-  const bucketIndex = weights.findIndex((val) => {
-    i += val;
-    return randomWeight <= i;
-  });
+  if (sessionAlgorithm === "random") {
+    const candidates = shuffle(
+      buckets.flatMap((val) =>
+        Array.from(sessionBuckets[val]).map((entry) => ({ val, entry }))
+      )
+    );
 
-  const bucketValue = buckets[bucketIndex];
-  const nextWord = shuffle(Array.from(sessionBuckets[bucketValue]))[0];
+    bucketValue = candidates[0].val;
+    nextWord = candidates[0].entry;
+  } else {
+    const weights = buckets.map((val) => 100 / Math.pow(2, val));
+    const totalWeight = weights.reduce((acc, curr) => acc + curr, 0);
+    const randomWeight = Math.random() * totalWeight;
+
+    let i = 0;
+    const bucketIndex = weights.findIndex((val) => {
+      i += val;
+      return randomWeight <= i;
+    });
+
+    bucketValue = buckets[bucketIndex];
+    nextWord = shuffle(Array.from(sessionBuckets[bucketValue]))[0];
+  }
 
   sessionBuckets[bucketValue].delete(nextWord);
 
