@@ -152,31 +152,36 @@ function App() {
       return;
     }
 
-    const word = sessionWords[cardIndex];
+    let word = sessionWords[cardIndex];
 
     if (!word) {
       return;
     }
 
-    const cachedTranslation = getCachedTranslation(word);
+    let translation = getCachedTranslation(word);
 
-    if (cachedTranslation === undefined || cachedTranslation === null) {
+    if (translation === undefined || translation === null) {
       fetchTranslation(word).then(({ translation, gender }) => {
         const storedTranslation = translation + (gender ? ` (${gender})` : "");
 
         setCachedTranslation(word, storedTranslation);
 
-        setCard({
-          original: word,
-          translation: storedTranslation,
-        });
-      });
-    } else {
-      setCard({
-        original: word,
-        translation: cachedTranslation,
+        translation = storedTranslation;
       });
     }
+
+    if (translation.endsWith("(m)")) {
+      word = `ο ${word}`;
+    } else if (translation.endsWith("(f)")) {
+      word = `η ${word}`;
+    } else if (translation.endsWith("(n)")) {
+      word = `το ${word}`;
+    }
+
+    setCard({
+      original: word,
+      translation,
+    });
   }, [cardIndex, sessionWords]);
 
   return (
