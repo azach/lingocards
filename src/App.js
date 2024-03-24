@@ -178,14 +178,6 @@ function App() {
       });
     }
 
-    if (translation.endsWith("(m)")) {
-      word = `ο ${word}`;
-    } else if (translation.endsWith("(f)")) {
-      word = `η ${word}`;
-    } else if (translation.endsWith("(n)")) {
-      word = `το ${word}`;
-    }
-
     setCard({
       original: word,
       translation,

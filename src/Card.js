@@ -86,7 +86,7 @@ function Card({
           },
         }}
       >
-        <p className="card-text center">{original}</p>
+        <p className="card-text center">{inflect(original, translation)}</p>
         <p className="card-text center">{translation || "Unknown"}</p>
       </ReactCardFlip>
 
@@ -157,6 +157,18 @@ function Card({
       </div>
     </div>
   );
+}
+
+function inflect(original, translation) {
+  if (translation.endsWith("(m)")) {
+    return `ο ${original}`;
+  } else if (translation.endsWith("(f)")) {
+    return `η ${original}`;
+  } else if (translation.endsWith("(n)")) {
+    return `το ${original}`;
+  }
+
+  return original;
 }
 
 export default Card;
