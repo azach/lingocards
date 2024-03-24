@@ -160,6 +160,10 @@ function Card({
 }
 
 function inflect(original, translation) {
+  if (!translation) {
+    return original;
+  }
+
   if (translation.endsWith("(m)")) {
     return `ο ${original}`;
   } else if (translation.endsWith("(f)")) {
