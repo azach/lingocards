@@ -86,7 +86,7 @@ export const isSnoozed = (word) => {
 
   setSnooze(word, null);
 
-  return true;
+  return false;
 };
 
 export const getNextWord = ({

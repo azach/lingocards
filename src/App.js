@@ -156,7 +156,7 @@ function App() {
 
   // Load next word
   useEffect(() => {
-    if (cardIndex < 0 && cardIndex >= sessionWords.length) {
+    if (cardIndex < 0 || cardIndex >= sessionWords.length) {
       return;
     }
 
