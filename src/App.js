@@ -7,8 +7,10 @@ import Header from "./Header";
 import {
   DEFAULT_SESSION_LENGTH,
   getBucket,
+  getCardData,
   getNextWord,
   getScore,
+  isDue,
   isSnoozed,
   markCorrect,
   markIncorrect,
@@ -40,9 +42,15 @@ function App() {
     localStorage.getItem("swap_card_order") === "true"
   );
   const [totalWords, setTotalWords] = useState(null);
+  const [dueWords, setDueWords] = useState(0);
 
   const [sessionWords, setSessionWords] = useState([]);
   const [sessionBuckets, setSessionBuckets] = useState(null);
+  const [sessionStats, setSessionStats] = useState({
+    correct: 0,
+    incorrect: 0,
+    skipped: 0,
+  });
   const [sessionLength, setSessionLength] = useState(
     localStorage.getItem("session_length") === "null"
       ? null
@@ -60,16 +68,23 @@ function App() {
     );
 
     const newSessionBuckets = {};
+    let dueCount = 0;
 
     sessionWordBank.forEach((word) => {
       const wordBucket = getBucket(word);
       newSessionBuckets[wordBucket] ||= new Set();
       newSessionBuckets[wordBucket].add(word);
+
+      if (isDue(word)) {
+        dueCount++;
+      }
     });
 
     setTotalWords(wordBank.length);
+    setDueWords(dueCount);
     setSessionBuckets(newSessionBuckets);
     setSessionWords([]);
+    setSessionStats({ correct: 0, incorrect: 0, skipped: 0 });
     setCard(null);
     setCardIndex(-1);
   };
@@ -87,6 +102,11 @@ function App() {
   };
 
   const nextWord = () => {
+    // Count as skipped if advancing without marking correct/incorrect
+    if (card && cardIndex >= 0 && cardIndex < sessionWords.length) {
+      setSessionStats((prev) => ({ ...prev, skipped: prev.skipped + 1 }));
+    }
+
     if (sessionLength && cardIndex >= sessionLength - 1) {
       // End of session with set session length
       setCardIndex(sessionWords.length);
@@ -112,10 +132,30 @@ function App() {
   const gotWord = () => {
     if (card) {
       markCorrect(card.original);
-      nextWord();
+      setSessionStats((prev) => ({ ...prev, correct: prev.correct + 1 }));
 
       setCardResult(RESULT_SUCCESS);
       setTimeout(() => setCardResult(null), STATUS_TIMEOUT_MS);
+
+      // Advance without counting as skipped
+      if (sessionLength && cardIndex >= sessionLength - 1) {
+        setCardIndex(sessionWords.length);
+      } else if (cardIndex < sessionWords.length - 1) {
+        setCardIndex(cardIndex + 1);
+      } else {
+        const nextWordValue = getNextWord({
+          sessionBuckets,
+          setSessionBuckets,
+          sessionAlgorithm,
+        });
+
+        if (nextWordValue) {
+          setSessionWords([...sessionWords, nextWordValue]);
+          setCardIndex(cardIndex + 1);
+        } else {
+          setCardIndex(sessionWords.length);
+        }
+      }
     } else {
       nextWord();
     }
@@ -124,16 +164,52 @@ function App() {
   const missedWord = () => {
     if (card) {
       markIncorrect(card.original);
-      nextWord();
+      setSessionStats((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
 
       setCardResult(RESULT_MISS);
       setTimeout(() => setCardResult(null), STATUS_TIMEOUT_MS);
+
+      // Advance without counting as skipped
+      if (sessionLength && cardIndex >= sessionLength - 1) {
+        setCardIndex(sessionWords.length);
+      } else if (cardIndex < sessionWords.length - 1) {
+        setCardIndex(cardIndex + 1);
+      } else {
+        const nextWordValue = getNextWord({
+          sessionBuckets,
+          setSessionBuckets,
+          sessionAlgorithm,
+        });
+
+        if (nextWordValue) {
+          setSessionWords([...sessionWords, nextWordValue]);
+          setCardIndex(cardIndex + 1);
+        } else {
+          setCardIndex(sessionWords.length);
+        }
+      }
     } else {
       nextWord();
     }
   };
 
   useEventListener("keydown", ({ key }) => {
+    // On start screen, only allow right arrow to begin
+    if (cardIndex === -1) {
+      if (key === "ArrowRight") {
+        nextWord();
+      }
+      return;
+    }
+
+    // On completion screen, allow 'N' to start new session
+    if (cardIndex >= sessionWords.length) {
+      if (key === "n" || key === "N") {
+        initializeSession();
+      }
+      return;
+    }
+
     switch (key) {
       case "ArrowLeft":
         previousWord();
@@ -169,25 +245,33 @@ function App() {
     let translation = getCachedTranslation(word);
 
     if (translation === undefined || translation === null) {
+      setCard({
+        original: word,
+        translation: null,
+      });
+
       fetchTranslation(word).then(({ translation, gender }) => {
         const storedTranslation = translation + (gender ? ` (${gender})` : "");
 
         setCachedTranslation(word, storedTranslation);
 
-        translation = storedTranslation;
+        setCard({
+          original: word,
+          translation: storedTranslation,
+        });
+      });
+    } else {
+      setCard({
+        original: word,
+        translation,
       });
     }
-
-    setCard({
-      original: word,
-      translation,
-    });
   }, [cardIndex, sessionWords]);
 
   return (
     <div className="app">
       <header className="app-header">
-        <Header totalWords={totalWords} />
+        <Header totalWords={totalWords} dueWords={dueWords} />
       </header>
       <main className="app-body">
         {cardResult === RESULT_SUCCESS && <SuccessTitleCard />}
@@ -198,7 +282,9 @@ function App() {
           <>
             {cardIndex === -1 && <TitleCard text={"Start your session"} />}
 
-            {cardIndex === sessionWords.length && <CompleteTitleCard />}
+            {cardIndex === sessionWords.length && (
+              <CompleteTitleCard stats={sessionStats} />
+            )}
 
             {cardIndex >= 0 && cardIndex < sessionWords.length && !card && (
               <TitleCard text="" />

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { addWordsToCachedWorkBank, getCachedWordBank } from "./translations";
 
-function Header({ totalWords }) {
+function Header({ totalWords, dueWords }) {
   const importFile = (e) => {
     const file = e.target.files[0];
 
@@ -20,9 +20,15 @@ function Header({ totalWords }) {
   };
 
   return (
-    <div className="dropdown">
-      <button className="small">Settings</button>
-      <div className="dropdown-content">
+    <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+      {dueWords !== undefined && dueWords > 0 && (
+        <div style={{ fontSize: "14px", color: "#666" }}>
+          <span style={{ fontWeight: "bold", color: "#ff6b6b" }}>{dueWords}</span> due for review
+        </div>
+      )}
+      <div className="dropdown">
+        <button className="small">Settings</button>
+        <div className="dropdown-content">
         <a
           href="#"
           onClick={() => {
@@ -56,6 +62,7 @@ function Header({ totalWords }) {
         >
           {totalWords ? `Export ${totalWords} words` : "Export words"}
         </a>
+        </div>
       </div>
     </div>
   );

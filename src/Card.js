@@ -92,9 +92,24 @@ function Card({
 
       <div className="card-header-wrapper">
         <div className="card-header">
-          <div style={{ display: "grid", gap: "10px", gridAutoFlow: "column" }}>
+          <div
+            style={{
+              display: "grid",
+              gap: "10px",
+              gridAutoFlow: "column",
+              alignItems: "center",
+            }}
+          >
             <span className="text dark success">↑{score.correct}</span>
             <span className="text dark failure">↓{score.incorrect}</span>
+            {score.interval > 0 && (
+              <span
+                className="text dark"
+                style={{ fontSize: "12px", opacity: 0.7 }}
+              >
+                {score.interval}d
+              </span>
+            )}
           </div>
           <div className="button-row">
             <ExternalLink
@@ -164,12 +179,17 @@ function inflect(original, translation) {
     return original;
   }
 
-  if (translation.endsWith("(m)")) {
-    return `ο ${original}`;
-  } else if (translation.endsWith("(f)")) {
-    return `η ${original}`;
-  } else if (translation.endsWith("(n)")) {
-    return `το ${original}`;
+  // Check if original has gender marker (meaning it's a Greek word with translation info)
+  if (original.endsWith("(m)")) {
+    // Extract the word without gender marker
+    const word = original.replace(/\s*\([^)]+\)$/, "");
+    return `ο ${word}`;
+  } else if (original.endsWith("(f)")) {
+    const word = original.replace(/\s*\([^)]+\)$/, "");
+    return `η ${word}`;
+  } else if (original.endsWith("(n)")) {
+    const word = original.replace(/\s*\([^)]+\)$/, "");
+    return `το ${word}`;
   }
 
   return original;

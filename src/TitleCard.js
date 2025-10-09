@@ -56,16 +56,33 @@ export const MissTitleCard = () => (
   />
 );
 
-export const CompleteTitleCard = () => (
+export const CompleteTitleCard = ({ stats }) => (
   <TitleCard
     text={
-      <img
-        alt="Session complete"
-        height="128"
-        width="128"
-        src={star}
-        style={{ opacity: 0.9 }}
-      />
+      <div style={{ textAlign: "center" }}>
+        <img
+          alt="Session complete"
+          height="128"
+          width="128"
+          src={star}
+          style={{ opacity: 0.9 }}
+        />
+        {stats && (
+          <div style={{ marginTop: "30px", fontSize: "16px", color: "#666" }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: "30px" }}>
+              <span style={{ color: "#51cf66", fontWeight: "bold" }}>
+                ✓ {stats.correct} Correct
+              </span>
+              <span style={{ color: "#ff6b6b", fontWeight: "bold" }}>
+                ✗ {stats.incorrect} Incorrect
+              </span>
+              <span style={{ color: "#868e96", fontWeight: "bold" }}>
+                → {stats.skipped} Skipped
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
     }
   />
 );

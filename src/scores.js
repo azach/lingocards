@@ -10,12 +10,20 @@ export const SESSION_LENGTHS = [
 ];
 
 export const SESSION_ALGORITHMS = [
-  { value: null, label: "Default" },
+  { value: null, label: "Default (Spaced Repetition)" },
   { value: "random", label: "Random" },
+  { value: "legacy", label: "Legacy Bucket System" },
 ];
 
 const MAX_BUCKET = 6;
 
+// SM-2 Algorithm Constants
+const INITIAL_EASE_FACTOR = 2.5;
+const MIN_EASE_FACTOR = 1.3;
+const INITIAL_INTERVAL = 1; // days
+const EASY_BONUS = 1.3;
+
+// Legacy bucket system (kept for backwards compatibility)
 export const getBucket = (word) => {
   const scores = getScore(word);
   const netScore = Math.max(scores.correct - scores.incorrect, 0);
@@ -31,29 +39,111 @@ export const getScore = (word) => {
   return {
     correct: Math.max(cachedWord["correct"] || 0, 0),
     incorrect: Math.max(cachedWord["incorrect"] || 0, 0),
+    easeFactor: cachedWord["easeFactor"] || INITIAL_EASE_FACTOR,
+    interval: cachedWord["interval"] || 0,
+    dueDate: cachedWord["dueDate"] || Date.now(),
+    lastReviewed: cachedWord["lastReviewed"] || null,
   };
 };
 
-export const markCorrect = (word) => {
+// Get SM-2 card data
+export const getCardData = (word) => {
   const scores = JSON.parse(localStorage.getItem("scores")) || {};
   const cachedWord = scores[word] || {};
-  cachedWord["correct"] = (cachedWord["correct"] || 0) + 1;
-  cachedWord["bucket"] = Math.max(cachedWord["bucket"] || 0, 0) + 1;
+
+  return {
+    easeFactor: cachedWord["easeFactor"] || INITIAL_EASE_FACTOR,
+    interval: cachedWord["interval"] || 0,
+    dueDate: cachedWord["dueDate"] || Date.now(),
+    lastReviewed: cachedWord["lastReviewed"] || null,
+    repetitions: cachedWord["repetitions"] || 0,
+  };
+};
+
+// Check if a word is due for review
+export const isDue = (word) => {
+  const cardData = getCardData(word);
+  return cardData.dueDate <= Date.now();
+};
+
+// SM-2 Algorithm: Mark word as correct
+// quality: 0-5 scale (3-5 = pass, 0-2 = fail)
+//   5 = perfect response
+//   4 = correct with hesitation
+//   3 = correct with difficulty
+//   2 = incorrect but remembered
+//   1 = incorrect but familiar
+//   0 = complete blackout
+const updateCardSM2 = (word, quality) => {
+  const scores = JSON.parse(localStorage.getItem("scores")) || {};
+  const cachedWord = scores[word] || {};
+
+  // Get current values or defaults
+  let easeFactor = cachedWord["easeFactor"] || INITIAL_EASE_FACTOR;
+  let interval = cachedWord["interval"] || 0;
+  let repetitions = cachedWord["repetitions"] || 0;
+
+  // Update statistics
+  if (quality >= 3) {
+    cachedWord["correct"] = (cachedWord["correct"] || 0) + 1;
+  } else {
+    cachedWord["incorrect"] = (cachedWord["incorrect"] || 0) + 1;
+  }
+
+  // SM-2 Algorithm
+  if (quality >= 3) {
+    // Correct response
+    if (repetitions === 0) {
+      interval = INITIAL_INTERVAL;
+    } else if (repetitions === 1) {
+      interval = 6;
+    } else {
+      interval = Math.round(interval * easeFactor);
+    }
+    repetitions += 1;
+  } else {
+    // Incorrect response - reset
+    repetitions = 0;
+    interval = INITIAL_INTERVAL;
+  }
+
+  // Update ease factor based on quality
+  easeFactor = easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+  easeFactor = Math.max(easeFactor, MIN_EASE_FACTOR);
+
+  // Calculate next due date
+  const dueDate = Date.now() + interval * 24 * 60 * 60 * 1000;
+
+  // Save updated values
+  cachedWord["easeFactor"] = easeFactor;
+  cachedWord["interval"] = interval;
+  cachedWord["repetitions"] = repetitions;
+  cachedWord["dueDate"] = dueDate;
+  cachedWord["lastReviewed"] = Date.now();
 
   scores[word] = cachedWord;
-
   localStorage.setItem("scores", JSON.stringify(scores));
+
+  return { easeFactor, interval, repetitions, dueDate };
+};
+
+export const markCorrect = (word) => {
+  // Quality 4 = correct with slight hesitation (good default for "got it")
+  updateCardSM2(word, 4);
 };
 
 export const markIncorrect = (word) => {
-  const scores = JSON.parse(localStorage.getItem("scores")) || {};
-  const cachedWord = scores[word] || {};
-  cachedWord["incorrect"] = (cachedWord["incorrect"] || 0) + 1;
-  cachedWord["bucket"] = Math.max((cachedWord["bucket"] || 0) - 1, 0);
+  // Quality 1 = incorrect but word seems familiar
+  updateCardSM2(word, 1);
+};
 
-  scores[word] = cachedWord;
+// Additional quality levels for future enhancement
+export const markPerfect = (word) => {
+  updateCardSM2(word, 5);
+};
 
-  localStorage.setItem("scores", JSON.stringify(scores));
+export const markHard = (word) => {
+  updateCardSM2(word, 3);
 };
 
 export const getSnooze = (word) => {
@@ -104,6 +194,7 @@ export const getNextWord = ({
   let nextWord;
 
   if (sessionAlgorithm === "random") {
+    // Random: pick any word randomly
     const candidates = shuffle(
       buckets.flatMap((val) =>
         Array.from(sessionBuckets[val]).map((entry) => ({ val, entry }))
@@ -112,7 +203,8 @@ export const getNextWord = ({
 
     bucketValue = candidates[0].val;
     nextWord = candidates[0].entry;
-  } else {
+  } else if (sessionAlgorithm === "legacy") {
+    // Legacy bucket system: weighted by bucket
     const weights = buckets.map((val) => 100 / Math.pow(2, val));
     const totalWeight = weights.reduce((acc, curr) => acc + curr, 0);
     const randomWeight = Math.random() * totalWeight;
@@ -125,6 +217,33 @@ export const getNextWord = ({
 
     bucketValue = buckets[bucketIndex];
     nextWord = shuffle(Array.from(sessionBuckets[bucketValue]))[0];
+  } else {
+    // Default: Spaced Repetition - prioritize due words and overdue words
+    const allWords = buckets.flatMap((val) =>
+      Array.from(sessionBuckets[val]).map((word) => ({
+        word,
+        bucket: val,
+        cardData: getCardData(word),
+      }))
+    );
+
+    // Sort by due date (most overdue first), then by bucket (lower = less mastered)
+    allWords.sort((a, b) => {
+      const dueDiff = a.cardData.dueDate - b.cardData.dueDate;
+      if (Math.abs(dueDiff) > 1000 * 60 * 60) {
+        // If more than 1 hour difference in due date, prioritize by due date
+        return dueDiff;
+      }
+      // Otherwise prioritize by bucket (less mastered words)
+      return a.bucket - b.bucket;
+    });
+
+    // Take from top 20% to add some randomness while still prioritizing due words
+    const topCandidates = allWords.slice(0, Math.max(1, Math.ceil(allWords.length * 0.2)));
+    const selected = shuffle(topCandidates)[0];
+
+    nextWord = selected.word;
+    bucketValue = selected.bucket;
   }
 
   sessionBuckets[bucketValue].delete(nextWord);
