@@ -23,17 +23,20 @@ const MIN_EASE_FACTOR = 1.3;
 const INITIAL_INTERVAL = 1; // days
 const EASY_BONUS = 1.3;
 
+// Scores live in a single localStorage blob, so callers that look up many
+// words should load it once and pass it in rather than re-parsing per word.
+export const loadScores = () => JSON.parse(localStorage.getItem("scores")) || {};
+
 // Legacy bucket system (kept for backwards compatibility)
-export const getBucket = (word) => {
-  const scores = getScore(word);
+export const getBucket = (word, allScores = loadScores()) => {
+  const scores = getScore(word, allScores);
   const netScore = Math.max(scores.correct - scores.incorrect, 0);
   const scoreToRawBucket = Math.floor(Math.log2(netScore + 3));
 
   return Math.min(Math.max(scoreToRawBucket, 1), MAX_BUCKET);
 };
 
-export const getScore = (word) => {
-  const scores = JSON.parse(localStorage.getItem("scores")) || {};
+export const getScore = (word, scores = loadScores()) => {
   const cachedWord = scores[word] || {};
 
   return {
@@ -47,8 +50,7 @@ export const getScore = (word) => {
 };
 
 // Get SM-2 card data
-export const getCardData = (word) => {
-  const scores = JSON.parse(localStorage.getItem("scores")) || {};
+export const getCardData = (word, scores = loadScores()) => {
   const cachedWord = scores[word] || {};
 
   return {
@@ -61,8 +63,8 @@ export const getCardData = (word) => {
 };
 
 // Check if a word is due for review
-export const isDue = (word) => {
-  const cardData = getCardData(word);
+export const isDue = (word, scores = loadScores()) => {
+  const cardData = getCardData(word, scores);
   return cardData.dueDate <= Date.now();
 };
 
@@ -75,7 +77,7 @@ export const isDue = (word) => {
 //   1 = incorrect but familiar
 //   0 = complete blackout
 const updateCardSM2 = (word, quality) => {
-  const scores = JSON.parse(localStorage.getItem("scores")) || {};
+  const scores = loadScores();
   const cachedWord = scores[word] || {};
 
   // Get current values or defaults
@@ -219,11 +221,12 @@ export const getNextWord = ({
     nextWord = shuffle(Array.from(sessionBuckets[bucketValue]))[0];
   } else {
     // Default: Spaced Repetition - prioritize due words and overdue words
+    const scores = loadScores();
     const allWords = buckets.flatMap((val) =>
       Array.from(sessionBuckets[val]).map((word) => ({
         word,
         bucket: val,
-        cardData: getCardData(word),
+        cardData: getCardData(word, scores),
       }))
     );
 

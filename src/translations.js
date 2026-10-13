@@ -32,8 +32,25 @@ export function deleteCachedTranslation(word) {
   localStorage.setItem("translations", JSON.stringify(cachedTranslations));
 }
 
+// WordReference marks gender with abbreviations like "ουσ ουδ". Match them as
+// whole tokens so Greek words that merely contain e.g. "αρ" (καρέκλα) don't
+// pick up a spurious gender.
+const GENDER_MARKERS = [
+  ["n", /(?<!\p{L})ουδ(?!\p{L})/u],
+  ["f", /(?<!\p{L})θηλ(?!\p{L})/u],
+  ["m", /(?<!\p{L})αρσ?(?!\p{L})/u],
+];
+
+function extractGenders(text) {
+  return GENDER_MARKERS.filter(([, pattern]) => pattern.test(text)).map(
+    ([gender]) => gender
+  );
+}
+
 export async function fetchTranslation(word) {
-  const response = await fetch(`https://www.wordreference.com/gren/${word}`);
+  const response = await fetch(
+    `https://www.wordreference.com/gren/${encodeURIComponent(word)}`
+  );
 
   const text = await response.text();
 
@@ -63,16 +80,7 @@ export async function fetchTranslation(word) {
         const mainWord = fullText.split(/[\s,]/)[0];
 
         // Check if there's a gender indicator in the row
-        const rowText = firstRow.innerText;
-        if (rowText.includes("ουδ")) {
-          gender.push("n");
-        }
-        if (rowText.includes("θηλ")) {
-          gender.push("f");
-        }
-        if (rowText.includes("αρ")) {
-          gender.push("m");
-        }
+        gender = extractGenders(firstRow.innerText);
 
         translation = mainWord;
       }
@@ -91,15 +99,7 @@ export async function fetchTranslation(word) {
       .find((t) => t.includes(word));
 
     if (fromTranslationToTargetPrincipalTranslation) {
-      if (fromTranslationToTargetPrincipalTranslation.includes("ουδ")) {
-        gender.push("n");
-      }
-      if (fromTranslationToTargetPrincipalTranslation.includes("θηλ")) {
-        gender.push("f");
-      }
-      if (fromTranslationToTargetPrincipalTranslation.includes("αρ")) {
-        gender.push("m");
-      }
+      gender = extractGenders(fromTranslationToTargetPrincipalTranslation);
     }
   }
 

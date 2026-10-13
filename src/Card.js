@@ -31,20 +31,16 @@ function ExternalLink({ href, alt, src }) {
   );
 }
 
-function Card({
-  original,
-  score,
-  translation,
-  cardIndex,
-  nextWord,
-  isOrderSwapped,
-}) {
+// `word` is the word bank entry (usually Greek). `translation` is its cached
+// translation, with any gender suffix, e.g. "house (n)": null while it's still
+// loading, and "" if no translation was found.
+function Card({ word, score, translation, cardIndex, nextWord, isOrderSwapped }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isMouseOver, setIsMouseOver] = useState(false);
 
   useEffect(() => {
     setIsFlipped(false);
-  }, [original]);
+  }, [word]);
 
   useEventListener("keydown", (e) => {
     if (e.key === SPACEBAR || e.key === "w") {
@@ -56,10 +52,14 @@ function Card({
     const snoozeDate = new Date();
     snoozeDate.setDate(snoozeDate.getDate() + SNOOZE_WEEKS * 7);
 
-    setSnooze(isOrderSwapped ? translation : original, Number(snoozeDate));
+    setSnooze(word, Number(snoozeDate));
 
     nextWord();
   };
+
+  const front = inflect(word, translation);
+  const back = translation === null ? "…" : translation || "Unknown";
+  const encodedWord = encodeURIComponent(word);
 
   return (
     <div
@@ -86,8 +86,8 @@ function Card({
           },
         }}
       >
-        <p className="card-text center">{inflect(original, translation)}</p>
-        <p className="card-text center">{translation || "Unknown"}</p>
+        <p className="card-text center">{isOrderSwapped ? back : front}</p>
+        <p className="card-text center">{isOrderSwapped ? front : back}</p>
       </ReactCardFlip>
 
       <div className="card-header-wrapper">
@@ -113,23 +113,17 @@ function Card({
           </div>
           <div className="button-row">
             <ExternalLink
-              href={`https://en.wiktionary.org/wiki/${
-                isOrderSwapped ? translation : original
-              }`}
+              href={`https://en.wiktionary.org/wiki/${encodedWord}`}
               alt="Wiktionary"
               src={wiki}
             />
             <ExternalLink
-              href={`https://translate.google.com/details?sl=el&tl=en&text=${
-                isOrderSwapped ? translation : original
-              }&op=translate`}
+              href={`https://translate.google.com/details?sl=el&tl=en&text=${encodedWord}&op=translate`}
               alt="Google Translate"
               src={google}
             />
             <ExternalLink
-              href={`https://www.wordreference.com/gren/${
-                isOrderSwapped ? translation : original
-              }`}
+              href={`https://www.wordreference.com/gren/${encodedWord}`}
               alt="Word Reference"
               src={wordreference}
             />
@@ -148,9 +142,7 @@ function Card({
               className="card-action"
               onClick={(e) => {
                 e.stopPropagation();
-                deleteCachedTranslation(
-                  isOrderSwapped ? translation : original
-                );
+                deleteCachedTranslation(word);
                 nextWord();
               }}
             >
@@ -174,25 +166,18 @@ function Card({
   );
 }
 
-function inflect(original, translation) {
-  if (!translation) {
-    return original;
+const ARTICLES = { m: "ο", f: "η", n: "το" };
+
+// Prefix a Greek word with its definite article, using the gender suffix that
+// was appended to its translation (e.g. "house (n)" -> "το σπίτι").
+function inflect(word, translation) {
+  if (!translation || !/\p{Script=Greek}/u.test(word)) {
+    return word;
   }
 
-  // Check if original has gender marker (meaning it's a Greek word with translation info)
-  if (original.endsWith("(m)")) {
-    // Extract the word without gender marker
-    const word = original.replace(/\s*\([^)]+\)$/, "");
-    return `ο ${word}`;
-  } else if (original.endsWith("(f)")) {
-    const word = original.replace(/\s*\([^)]+\)$/, "");
-    return `η ${word}`;
-  } else if (original.endsWith("(n)")) {
-    const word = original.replace(/\s*\([^)]+\)$/, "");
-    return `το ${word}`;
-  }
+  const gender = translation.match(/\((m|f|n)\)$/)?.[1];
 
-  return original;
+  return gender ? `${ARTICLES[gender]} ${word}` : word;
 }
 
 export default Card;

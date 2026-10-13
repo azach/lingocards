@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { addWordsToCachedWorkBank, getCachedWordBank } from "./translations";
 
-function Header({ totalWords, dueWords }) {
+function Header({ totalWords, dueWords, onWordBankChanged }) {
   const importFile = (e) => {
     const file = e.target.files[0];
 
@@ -9,13 +9,20 @@ function Header({ totalWords, dueWords }) {
       return;
     }
 
+    // Allow re-importing the same file
+    e.target.value = "";
+
     const fileReader = new FileReader();
     fileReader.readAsText(file, "UTF-8");
     fileReader.onload = (e) => {
       const content = e.target.result;
-      const words = content.split("\n").map((w) => w.trim());
+      const words = content
+        .split("\n")
+        .map((w) => w.trim())
+        .filter(Boolean);
 
       addWordsToCachedWorkBank(words);
+      onWordBankChanged();
     };
   };
 
@@ -31,11 +38,14 @@ function Header({ totalWords, dueWords }) {
         <div className="dropdown-content">
         <a
           href="#"
-          onClick={() => {
-            const response = window.prompt("Enter word to add");
+          onClick={(e) => {
+            e.preventDefault();
+
+            const response = window.prompt("Enter word to add")?.trim();
 
             if (response) {
-              addWordsToCachedWorkBank([response.trim()]);
+              addWordsToCachedWorkBank([response]);
+              onWordBankChanged();
             }
           }}
         >
@@ -48,6 +58,7 @@ function Header({ totalWords, dueWords }) {
         <a
           href="#"
           onClick={(e) => {
+            e.preventDefault();
             e.stopPropagation();
 
             const blob = new Blob([getCachedWordBank().sort().join("\n")], {
@@ -58,6 +69,7 @@ function Header({ totalWords, dueWords }) {
             link.download = "words.txt";
             link.href = url;
             link.click();
+            URL.revokeObjectURL(url);
           }}
         >
           {totalWords ? `Export ${totalWords} words` : "Export words"}
